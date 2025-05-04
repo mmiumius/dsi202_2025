@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>MindVibe - Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Kanit', sans-serif;
+            background-color: #fff0f5;
+            color: #333;
+        }
+
+        .welcome-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 2rem;
+            background: linear-gradient(to bottom right, #fce4ec, #e0f7f1);
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 500;
+            color: #e83e8c;
+            margin-bottom: 1rem;
+        }
+
+        .tagline {
+            font-size: 1.3rem;
+            color: #20c997;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            font-size: 1rem;
+            padding: 0.8rem 2rem;
+            background-color: #20c997;
+            color: white;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #1ca085;
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="logo">MindVibe</div>
+        <div class="tagline">แฟชั่นสายคิ้วท์ เปลี่ยนลุคได้ทุกวัน 💖</div>
+        <a href="{% url 'home' %}" class="btn">เข้าสู่หน้าเว็บไซต์</a>
+    </div>
+</body>
+</html>
