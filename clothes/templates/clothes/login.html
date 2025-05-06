@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>เข้าสู่ระบบ - MindVibe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Kanit', sans-serif;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom right, #fce4ec, #e0f7f1);
+            padding: 2rem;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: #e83e8c;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: #20c997;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .form-container h1 {
+            font-size: 1.8rem;
+            color: #e83e8c;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        form p {
+            margin-bottom: 1rem;
+        }
+
+        form p label {
+            display: block;
+            margin-bottom: 0.3rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        form input[type="text"],
+        form input[type="password"],
+        form input[type="email"] {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Kanit', sans-serif;
+            font-size: 1rem;
+        }
+
+        .errorlist {
+            list-style-type: none;
+            padding: 0;
+            color: #d9534f;
+            font-size: 0.9em;
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .errorlist li {
+            padding: 0.2rem 0;
+        }
+
+        .submit-btn {
+            font-family: 'Kanit', sans-serif; /* ✅ ฟอนต์ตรงกับหน้าทั้งหมด */
+            font-size: 1rem;
+            padding: 0.8rem 2rem;
+            background-color: #e83e8c;
+            color: white;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s ease;
+            display: block;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+
+        .submit-btn:hover {
+            background-color: #c93075;
+        }
+
+        .form-links {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .form-links a {
+            color: #20c997;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .form-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">MindVibe</div>
+    <div class="tagline">แฟชั่นสายคิ้วท์ เปลี่ยนลุคได้ทุกวัน 💖</div>
+
+    <div class="form-container">
+        <h1>เข้าสู่ระบบ</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="submit-btn">เข้าสู่ระบบ</button>
+        </form>
+        <div class="form-links">
+            <a href="{% url 'signup' %}">ยังไม่มีบัญชี? สมัครสมาชิก</a>
+        </div>
+    </div>
+</body>
+</html>

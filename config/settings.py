@@ -66,3 +66,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = 'login' # ชื่อ URL pattern ของหน้า login ที่เราตั้งไว้ใน urls.py
+LOGIN_REDIRECT_URL = 'home' # หลังจาก login สำเร็จ จะให้ไปหน้าไหน
+LOGOUT_REDIRECT_URL = 'welcome' # หลังจาก logout จะให้ไปหน้าไหน

@@ -60,7 +60,10 @@
     <div class="welcome-container">
         <div class="logo">MindVibe</div>
         <div class="tagline">แฟชั่นสายคิ้วท์ เปลี่ยนลุคได้ทุกวัน 💖</div>
-        <a href="{% url 'home' %}" class="btn">เข้าสู่หน้าเว็บไซต์</a>
+        <div>
+            <a href="{% url 'login' %}" class="btn" style="margin-right: 10px;">เข้าสู่ระบบ (Login)</a>
+            <a href="{% url 'signup' %}" class="btn">สมัครสมาชิก (Signup)</a>
+        </div>
     </div>
 </body>
 </html>
