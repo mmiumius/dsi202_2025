@@ -8,4 +8,6 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),    # URL ใหม่สำหรับหน้าสมัครสมาชิก
     path('login/', views.login_view, name='login'),      # URL ใหม่สำหรับหน้าเข้าสู่ระบบ
     path('logout/', views.logout_view, name='logout'),    # URL ใหม่สำหรับออกจากระบบ
+    path('cart/add/<int:pk>/', views.add_to_cart, name='add_to_cart'),
+
 ]
