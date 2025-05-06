@@ -58,3 +58,44 @@ def login_view(request):
 def logout_view(request):
     logout(request) # สั่งให้ user ออกจากระบบ
     return redirect('welcome') # กลับไปที่หน้า welcome
+
+def get_or_create_cart(request):
+    """Helper function เพื่อดึงหรือสร้าง Cart สำหรับ session ปัจจุบัน"""
+    session_key = request.session.session_key
+    if not session_key:
+        request.session.create() # สร้าง session ถ้ายังไม่มี
+        session_key = request.session.session_key
+
+    cart, created = Cart.objects.get_or_create(session_key=session_key)
+    # อาจจะเพิ่ม logic ผูกกับ User ถ้า login อยู่ด้วยก็ได้
+    # if request.user.is_authenticated:
+    #     cart.user = request.user
+    #     cart.save()
+    return cart
+
+def add_to_cart(request, pk):
+    clothing_item = get_object_or_404(Clothing, pk=pk, available=True) # เช็คว่าสินค้ามีอยู่และ available
+    cart = get_or_create_cart(request)
+
+    # ตรวจสอบว่ามีสินค้านี้ในตะกร้าแล้วหรือยัง
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        clothing=clothing_item,
+        defaults={'quantity': 1} # ถ้าสร้างใหม่ ให้ quantity เป็น 1
+    )
+
+    if not created:
+        # ถ้ามีอยู่แล้ว ให้เพิ่ม quantity
+        cart_item.quantity += 1
+        cart_item.save()
+        messages.success(request, f"เพิ่มจำนวน '{clothing_item.name}' ในตะกร้าแล้ว!")
+    else:
+        messages.success(request, f"เพิ่ม '{clothing_item.name}' ลงในตะกร้าแล้ว!")
+
+    # Redirect กลับไปหน้าเดิม หรือหน้า detail หรือหน้าตะกร้า
+    # ตอนนี้ redirect กลับไปหน้า detail ก่อน
+    return redirect('detail', pk=pk)
+# --- จบ Add to Cart View ---
+
+# อย่าลืม import get_or_create_cart และ add_to_cart ใน __init__.py ของ app ถ้าจำเป็น
+# หรือ ensure ว่ามันถูก include อย่างถูกต้องใน urls.py
