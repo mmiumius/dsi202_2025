@@ -5,6 +5,7 @@
     <title>Sign Up - MindVibe</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* ... (CSS Styles from your file) ... */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -171,7 +172,7 @@
             <button type="submit" class="submit-btn">Sign Up</button>
         </form>
         <div class="form-links">
-            <a href="{% url 'login' %}">Already have an account? Log In</a>
+            <a href="{% url 'clothes:login' %}">Already have an account? Log In</a> {# <<<< แก้ไข #}
         </div>
     </div>
 </body>

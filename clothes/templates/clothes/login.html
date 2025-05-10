@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login - MindVibe</title> 
+    <title>Login - MindVibe</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* ... (CSS Styles from your file) ... */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -151,18 +152,17 @@
 </head>
 <body>
     <div class="logo">MindVibe</div>
-    <div class="tagline">Elevate your style, effortlessly.</div> 
+    <div class="tagline">Elevate your style, effortlessly.</div>
 
     <div class="form-container">
-        <h1>Login</h1> 
+        <h1>Login</h1>
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }} 
-            <button type="submit" class="submit-btn">Login</button> 
+            {{ form.as_p }}
+            <button type="submit" class="submit-btn">Login</button>
         </form>
         <div class="form-links">
-        
-            <a href="{% url 'signup' %}">Don't have an account? Sign Up</a> 
+            <a href="{% url 'clothes:signup' %}">Don't have an account? Sign Up</a> {# <<<< แก้ไข #}
         </div>
     </div>
 </body>

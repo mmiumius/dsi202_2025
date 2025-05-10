@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <title>MindVibe - Welcome</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* ... (CSS Styles from your file) ... */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -115,16 +117,15 @@
                 min-width: 150px; /* Min width for Login/Sign Up */
             }
         }
-
     </style>
 </head>
 <body>
     <div class="welcome-container">
         <div class="logo">MindVibe</div>
-        <div class="tagline">Elevate your style, effortlessly.</div> 
+        <div class="tagline">Elevate your style, effortlessly.</div>
         <div class="button-wrapper">
-            <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
-            <a href="{% url 'signup' %}" class="btn btn-secondary">Sign Up</a> 
+            <a href="{% url 'clothes:login' %}" class="btn btn-primary">Login</a>    {# <<<< แก้ไข #}
+            <a href="{% url 'clothes:signup' %}" class="btn btn-secondary">Sign Up</a> {# <<<< แก้ไข #}
         </div>
     </div>
 </body>

@@ -36,3 +36,35 @@ class CartItem(models.Model):
         return self.clothing.price * self.quantity
 
 # -------------------------
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True, help_text="ชื่อหมวดหมู่ (เช่น Evening Gowns, Casual Chic)")
+    slug = models.SlugField(max_length=120, unique=True, help_text="ส่วนที่แสดงใน URL (ภาษาอังกฤษ, ไม่มีเว้นวรรค, ตัวเล็ก)")
+    image = models.ImageField(
+        upload_to='category_covers/',
+        blank=True,
+        null=True,
+        help_text="รูปภาพหน้าปกของหมวดหมู่ (ควรมีขนาดเหมาะสมสำหรับแสดงผลเป็น Cover)"
+    )
+    description = models.TextField(blank=True, null=True, help_text="คำอธิบายสั้นๆ (ถ้ามี)")
+    is_active = models.BooleanField(default=True, help_text="แสดงหมวดหมู่นี้บนเว็บไซต์หรือไม่?")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "หมวดหมู่ (Category)"
+        verbose_name_plural = "หมวดหมู่ (Categories)"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        # แก้ไขให้ใช้ namespace 'clothes'
+        # ถ้าคุณมี URL pattern ชื่อ 'products_by_category' ใน clothes/urls.py
+        # ที่รับ category_slug เป็น argument
+        # ตรวจสอบให้แน่ใจว่าคุณได้ un-comment path สำหรับ 'products_by_category' ใน clothes/urls.py ด้วย
+        try:
+            return reverse('clothes:products_by_category', kwargs={'category_slug': self.slug})
+        except: # ถ้ายังไม่มี URL pattern นั้น หรือมีปัญหาในการ reverse ก็ให้ return # ไปก่อน
+            return "#"

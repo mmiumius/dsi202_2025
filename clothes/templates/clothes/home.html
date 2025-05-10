@@ -1,23 +1,40 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>MindVibe - รวมชุดสุดคิ้วท์ 💖</title>
+    <title>MindVibe - Trendy Fashion Rentals</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body {
-            font-family: 'Kanit', sans-serif;
-            background-color: #fff0f5; /* สีพื้นหลังชมพูอ่อน */
-            color: #333;
-            margin: 0; /* ตามโค้ดเดิมที่ให้มา */
-            padding-top: 80px; /* ตามโค้ดเดิมที่ให้มา (สำหรับ fixed navbar) */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        /* Navbar Styling */
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #FAF7F5;
+            color: #4A4A4A;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-top: 70px; /* For fixed navbar */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .main-content {
+            flex-grow: 1;
+        }
+
+        /* Navbar Styles */
         .navbar {
-            background-color: #ffffff;
-            padding: 0.9rem 2rem; /* ปรับ padding */
-            box-shadow: 0 2px 6px rgba(232, 62, 140, 0.12); /* เงาสีชมพูอ่อนๆ บางลง */
+            background-color: #FFFFFF;
+            height: 70px;
+            padding: 0 2.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -28,296 +45,451 @@
             z-index: 1000;
         }
 
+        .navbar-left {
+            display: flex;
+            align-items: center;
+        }
+
         .navbar-logo a {
-            font-size: 1.9rem; /* ขนาดโลโก้ */
-            font-weight: 700;
-            color: #e83e8c;
+            font-size: 2rem;
+            font-weight: 500;
+            color: #2C3E50;
             text-decoration: none;
-            transition: transform 0.3s ease;
-        }
-        .navbar-logo a:hover {
-            transform: rotate(-5deg) scale(1.05); /* เอียงเล็กน้อยและขยายเมื่อ hover */
+            margin-right: 2.5rem;
         }
 
+        .navbar-categories a {
+            color: #555;
+            text-decoration: none;
+            margin-right: 1.5rem;
+            font-weight: 400;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+        .navbar-categories a:hover {
+            color: #A7B8A5;
+        }
+        .navbar-categories a.active {
+            color: #2C3E50;
+            font-weight: 500;
+        }
 
-        .navbar-links a {
-            color: #e83e8c; /* สีลิงก์ชมพู */
+        .navbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-icons a, .navbar-auth > a, .navbar-auth > span {
+            color: #2C3E50;
             text-decoration: none;
             margin-left: 1.5rem;
-            font-weight: 500;
-            transition: color 0.3s ease, transform 0.2s ease;
-            display: inline-block;
-            position: relative;
+            font-size: 1.1rem;
+            transition: color 0.2s ease;
         }
-        .navbar-links a:hover {
-            color: #20c997; /* เปลี่ยนเป็นสีเขียวเมื่อ hover */
+        .navbar-icons a:hover, .navbar-auth > a:hover:not(.btn-login):not(.btn-signup):not(.btn-logout) {
+            color: #A7B8A5;
+        }
+        .navbar-icons a i {
+            font-size: 1.2rem;
+        }
+        .navbar-auth .user-greeting {
+             margin-right: 0.5rem;
+             margin-left: 1.5rem;
+             color: #4A4A4A;
+             font-size: 0.9rem;
+             font-weight: 400;
+        }
+
+
+        .navbar-auth .btn-login,
+        .navbar-auth .btn-signup,
+        .navbar-auth .btn-logout {
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.25s ease, transform 0.15s ease;
+            border: none;
+            font-size: 0.9rem;
+        }
+        .navbar-auth .btn-login:hover,
+        .navbar-auth .btn-signup:hover,
+        .navbar-auth .btn-logout:hover {
             transform: translateY(-2px);
         }
-        .navbar-links a .icon { /* สำหรับใส่ emoji หน้าลิงก์ */
-            margin-right: 5px;
-        }
+        .navbar-auth .btn-login { background-color: #A7B8A5; }
+        .navbar-auth .btn-login:hover { background-color: #96A894; }
+        .navbar-auth .btn-signup { background-color: #2C3E50; margin-left: 0.8rem; }
+        .navbar-auth .btn-signup:hover { background-color: #1e2a38; }
+        .navbar-auth .btn-logout { background-color: #7F8C8D; }
+        .navbar-auth .btn-logout:hover { background-color: #6c757d; }
 
 
-        .navbar-links .btn-login,
-        .navbar-links .btn-signup,
-        .navbar-links .btn-logout { /* เพิ่ม .btn-logout */
-            padding: 0.6rem 1.2rem;
-            border-radius: 20px;
-            color: white;
-            font-weight: 500;
-            text-decoration: none;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-            border: none; /* เอาเส้นขอบออก */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .navbar-links .btn-login:hover,
-        .navbar-links .btn-signup:hover,
-        .navbar-links .btn-logout:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        .navbar-links .btn-login {
-            background-color: #e83e8c;
-        }
-        .navbar-links .btn-signup {
-            background-color: #20c997;
-            margin-left: 0.8rem;
-        }
-        .navbar-links .btn-logout { /* สไตล์สำหรับปุ่ม Logout */
-            background-color: #ff7f50; /* สีส้มคอรัล */
-        }
-
-
-        .container {
-            padding: 2rem 1.5rem;
-            max-width: 1200px;
+        /* Page Container */
+        .page-container {
+            width: 100%;
+            max-width: 1280px;
             margin: 0 auto;
+            padding: 2.5rem 2rem;
         }
 
-        .page-title {
-            text-align: center;
-            color: #e83e8c;
-            margin-bottom: 2.5rem;
-            font-size: 2.4rem; /* ปรับขนาด */
-            font-weight: 700;
-            /* เพิ่มเงาข้อความสีชมพูอ่อนๆ และขาว */
-            text-shadow: 1px 1px 0px #fff, 2px 2px 0px rgba(232, 62, 140, 0.2);
-        }
-
-        /* Search Form Styling */
-        .search-form {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 3rem;
-            padding: 0 1rem;
-        }
-
-        .search-form input[type="search"] {
-            padding: 0.9rem 1.5rem;
-            width: 60%;
-            max-width: 500px;
-            border: 2px solid #fce4ec; /* ขอบสีชมพูอ่อนมากๆ */
-            border-radius: 30px;
-            font-size: 1rem;
-            font-family: 'Kanit', sans-serif;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            background-color: #fff; /* พื้นหลังขาว */
-        }
-        .search-form input[type="search"]::placeholder{
-            color: #f7a8c5; /* สี placeholder ชมพูอ่อน */
-        }
-        .search-form input[type="search"]:focus {
-            outline: none;
-            border-color: #e83e8c;
-            background-color: #fff;
-            box-shadow: 0 0 0 3px rgba(232, 62, 140, 0.2); /* เงาชมพูเมื่อ focus */
-        }
-
-        .search-form button {
-            background: #20c997;
-            color: white;
-            border: none;
-            padding: 0.9rem 1.8rem;
-            margin-left: 0.8rem;
-            border-radius: 30px;
-            cursor: pointer;
-            font-family: 'Kanit', sans-serif;
-            font-weight: 500;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(32, 201, 151, 0.3); /* เงาเขียวอ่อน */
-        }
-        .search-form button:hover {
-            background-color: #1ca085;
-            transform: scale(1.05);
-        }
-        .search-form button .icon {
-            margin-right: 0.5rem;
-        }
-
-
-        /* Product Grid Styling */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); /* ปรับขนาดขั้นต่ำของการ์ด */
-            gap: 2rem;
-            max-width: 1200px;
-            margin: auto;
-        }
-
-        .item {
-            background-color: #ffffff;
-            border-radius: 18px; /* มนขึ้นอีก */
-            padding: 1rem; 
-            text-align: center;
-            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.35s ease; /* ปรับ Easing ให้ดูเด้งๆ */
-            box-shadow: 0 5px 15px rgba(232, 62, 140, 0.1); /* เงาสีชมพูอ่อนๆ */
-            position: relative; /* สำหรับ pseudo-element หัวใจ */
-            overflow: hidden; /* ป้องกัน pseudo-element ล้น */
-        }
-
-        .item:hover {
-            transform: translateY(-8px) scale(1.04); /* เด้งขึ้นและขยาย */
-            box-shadow: 0 10px 25px rgba(232, 62, 140, 0.18);
-        }
-        
-        /* ไอคอนหัวใจเล็กๆ บนการ์ด */
-        .item a::after {
-            content: '💖'; /* หรือ '♥' */
-            font-size: 1.5rem;
-            color: #e83e8c;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            opacity: 0;
-            transform: scale(0.5);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        .item a:hover::after {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-
-        .item a {
+        /* Hero Section */
+        .hero-section-link {
+            display: block;
             text-decoration: none;
             color: inherit;
+            margin-bottom: 3.5rem;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            background-color: #e0e0e0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hero-section-link:hover {
+            transform: translateY(-5px) scale(1.005);
+            box-shadow: 0 12px 28px rgba(44, 62, 80, 0.18);
+        }
+
+        .hero-section {
+            background-size: cover;
+            background-position: center;
+            height: 480px;
             display: flex;
             flex-direction: column;
-            height: 100%;
-        }
-
-        .item img {
-            width: 100%;
-            height: 290px; /* เพิ่มความสูงรูปเล็กน้อย */
-            object-fit: cover;
-            border-radius: 12px; /* ความมนของรูปภาพให้สอดคล้องกับการ์ด */
-            margin-bottom: 1rem;
-            transition: transform 0.3s ease;
-        }
-        .item a:hover img { /* รูปภาพขยายเล็กน้อยเมื่อ hover บนการ์ด */
-             transform: scale(1.03);
-        }
-
-
-        .item h2 {
-            font-size: 1.1rem;
-            margin-top: 0.5rem;
-            color: #4a4a4a;
-            font-weight: 500;
-            flex-grow: 1;
-            margin-bottom: 0.5rem;
-            line-height: 1.4;
-        }
-
-        .empty {
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            color: #e83e8c;
-            margin-top: 3rem;
-            grid-column: 1 / -1;
-            font-size: 1.3rem; /* ใหญ่ขึ้น */
+            color: #FFFFFF;
+            position: relative;
+            padding: 2rem;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.38);
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        .hero-section h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            text-shadow: 0px 2px 5px rgba(0,0,0,0.5);
+        }
+        .hero-section p {
+            font-size: 1.2rem;
+            margin-bottom: 0;
+            font-weight: 400;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.65;
+            text-shadow: 0px 1px 4px rgba(0,0,0,0.4);
+        }
+
+        /* Section Title */
+        .section-title {
+            text-align: center;
+            color: #2C3E50;
+            margin-top: 1rem;
+            margin-bottom: 2.5rem;
+            font-size: 1.9rem;
             font-weight: 500;
         }
-        .empty::before { /* เพิ่ม emoji ด้านหน้า */
-            content: "😿 ";
-            font-size: 1.5rem;
-        }
 
-
-        /* Footer Styling */
-        .footer {
-            background: linear-gradient(to right, #e83e8c, #ff7eb3); /* ไล่สีชมพู footer */
-            color: #ffffff; /* ตัวอักษรสีขาว */
-            text-align: center;
-            padding: 2.5rem 1rem;
-            margin-top: 4rem;
-            font-size: 0.95rem; /* ขนาดฟอนต์ใหญ่ขึ้นเล็กน้อย */
+        /* Category Grid */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 3.5rem;
         }
-        .footer p {
-            margin: 0.5rem 0;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* เงาข้อความเล็กน้อย */
-        }
-        .footer a {
-            color: #fff0f5; /* สีลิงก์ชมพูอ่อนมาก */
+        .category-card-link {
+            display: block;
             text-decoration: none;
+            color: inherit;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            height: 350px;
+            background-color: #DDDDDD;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .category-card-link:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 10px 22px rgba(44, 62, 80, 0.15);
+        }
+        .category-card-image-bg {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.4s ease;
+        }
+        .category-card-link:hover .category-card-image-bg {
+            transform: scale(1.08);
+        }
+        .category-card-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.0) 100%);
+            z-index: 1;
+            border-radius: 0 0 10px 10px;
+        }
+        .category-card-name {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            right: 25px;
+            color: #FFFFFF;
+            font-size: 1.7rem;
+            font-weight: 500;
+            text-align: left;
+            z-index: 2;
+            text-shadow: 0px 2px 4px rgba(0,0,0,0.65);
+            line-height: 1.25;
+        }
+
+        /* Image Showcase Section Styles */
+        .image-showcase-section {
+            margin-bottom: 3.5rem;
+            padding: 2rem 0;
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+        .image-showcase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            align-items: center;
+            padding: 0 1.5rem;
+        }
+        .showcase-item {
+            overflow: hidden;
+            border-radius: 6px;
+        }
+        .showcase-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 6px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .showcase-item img:hover {
+            transform: scale(1.03);
+            opacity: 0.9;
+        }
+        .showcase-cta-container {
+            text-align:center;
+            margin-top: 2.5rem;
+            padding-bottom: 1rem;
+        }
+        .showcase-cta-button {
+            font-family: 'Kanit', sans-serif;
+            background-color: #A7B8A5;
+            color: white;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: background-color 0.25s ease, transform 0.15s ease;
+            border: none;
+            display: inline-block;
+        }
+        .showcase-cta-button:hover {
+            background-color: #96A894;
+            transform: translateY(-2px);
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: #FFFFFF;
+            color: #4A4A4A;
+            padding: 3.5rem 2rem;
+            margin-top: auto;
+            border-top: 1px solid #E0E0E0;
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2.5rem;
+            text-align: left;
+        }
+        .footer-section h4 {
+            font-size: 1.1rem;
+            color: #2C3E50;
+            margin-bottom: 1.2rem;
             font-weight: 500;
         }
-        .footer a:hover {
-            text-decoration: underline;
-            color: #ffffff;
+        .footer-section ul { list-style: none; padding: 0; margin: 0; }
+        .footer-section ul li { margin-bottom: 0.7rem; }
+        .footer-section a {
+            color: #7F8C8D;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
         }
-        .footer .tagline-footer {
-            font-weight: 700; /* หนาขึ้น */
-            font-size: 1.1rem; /* ใหญ่ขึ้น */
-            margin-top: 0.8rem;
+        .footer-section a:hover { color: #A7B8A5; }
+        .footer-section .social-icons a { font-size: 1.3rem; margin-right: 1rem; }
+        .footer-section .social-icons a:last-child { margin-right: 0; }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #EAEAEA;
+            font-size: 0.85rem;
+            color: #7F8C8D;
         }
+        .footer-bottom p { margin: 0.3rem 0; }
 
     </style>
 </head>
 <body>
 
     <nav class="navbar">
-        <div class="navbar-logo">
-            <a href="{% url 'home' %}">MindVibe 🎀</a>
+        <div class="navbar-left">
+            <div class="navbar-logo">
+                <a href="{% url 'clothes:home' %}">MindVibe</a> {# <<<< แก้ไข #}
+            </div>
+            <div class="navbar-categories">
+                <a href="#" class="active">Shop</a>
+                <a href="{% url 'clothes:new_arrivals' %}">New Arrivals</a> {# <<<< แก้ไข #}
+                <a href="{% url 'clothes:popular_rentals' %}">Popular Rentals</a> {# <<<< แก้ไข #}
+                <a href="#" style="color: #A7B8A5;">Sale</a>
+            </div>
         </div>
-        <div class="navbar-links">
-            <a href="{% url 'home' %}"><span class="icon">🛍️</span>สินค้าทั้งหมด</a>
-            {% if user.is_authenticated %}
-                <a href="{% url 'logout' %}" class="btn-logout"><span class="icon">👋</span>ออกจากระบบ</a>
-            {% else %}
-                <a href="{% url 'login' %}" class="btn-login"><span class="icon">🔑</span>เข้าสู่ระบบ</a>
-                <a href="{% url 'signup' %}" class="btn-signup"><span class="icon">✨</span>สมัครสมาชิก</a>
-            {% endif %}
+        <div class="navbar-right">
+            <div class="navbar-icons">
+                <a href="#" aria-label="Search"><i class="fas fa-search"></i></a>
+                <a href="#" aria-label="Wishlist"><i class="fas fa-heart"></i></a>
+                <a href="#" aria-label="Shopping Bag"><i class="fas fa-shopping-bag"></i></a>
+            </div>
+            <div class="navbar-auth">
+                {% if user.is_authenticated %}
+                    <span class="user-greeting">Hi, {{ user.username|default:'User' }}</span>
+                    <a href="{% url 'clothes:logout' %}" class="btn-logout">Logout</a> {# <<<< แก้ไข #}
+                {% else %}
+                    <a href="{% url 'clothes:login' %}" class="btn-login">Login</a> {# <<<< แก้ไข #}
+                    <a href="{% url 'clothes:signup' %}" class="btn-signup">Sign Up</a> {# <<<< แก้ไข #}
+                {% endif %}
+            </div>
         </div>
     </nav>
 
-    <div class="container">
-        <h1 class="page-title">💖 MindVibe คอลเลคชั่นสุดปัง 🛍️</h1>
+    <div class="main-content">
+        <div class="page-container">
+            <a href="{% url 'clothes:new_arrivals' %}" class="hero-section-link" aria-label="Explore New Arrivals"> {# <<<< แก้ไข #}
+                <section class="hero-section" style="background-image: url('{% if hero_data.image.url %}{{ hero_data.image.url }}{% else %}https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80{% endif %}');">
+                    <div class="hero-content">
+                        <h1>Find Your Next Vibe</h1>
+                        <p>Trendy outfits from top brands, ready for your moment. Rent the look, own the feeling.</p>
+                    </div>
+                </section>
+            </a>
 
-        <form method="get" class="search-form">
-            <input type="search" name="q" placeholder="อยากได้ชุดไหน ค้นเลยจ้า..." value="{{ query }}">
-            <button type="submit"><span class="icon">🔍</span>ค้นหาเลย!</button>
-        </form>
+            <section class="shop-by-category">
+                <h2 class="section-title">Shop By Category</h2>
+                <div class="category-grid">
+                    {% if categories %}
+                        {% for category in categories %}
+                        <a href="{{ category.get_absolute_url }}" class="category-card-link" aria-label="Shop {{ category.name }}">
+                            <div class="category-card-image-bg"
+                                 style="background-image: url('{% if category.image %}{{ category.image.url }}{% else %}https://placehold.co/300x350/DDDDDD/AAAAAA?text={{ category.name|urlencode|default:'Category' }}{% endif %}');">
+                            </div>
+                            <div class="category-card-overlay"></div>
+                            <h3 class="category-card-name">{{ category.name }}</h3>
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                        <p style="grid-column: 1 / -1; text-align: center; color: #7F8C8D;">No categories to display right now. Check back soon!</p>
+                    {% endif %}
+                </div>
+            </section>
 
-        <div class="grid">
-            {% for item in items %}
-            <div class="item">
-                <a href="{% url 'detail' item.pk %}">
-                    <img src="{{ item.image.url }}" alt="{{ item.name }}">
-                    <h2>{{ item.name }}</h2>
-                </a>
+            <section class="image-showcase-section">
+                <h2 class="section-title">Style Inspiration</h2>
+                <div class="image-showcase-grid">
+                    {% if showcase_images %}
+                        {% for image_obj in showcase_images %}
+                        <div class="showcase-item">
+                            <a href="{{ image_obj.link_url|default:'#' }}">
+                                <img src="{{ image_obj.image.url }}" alt="{{ image_obj.alt_text|default:'Style Showcase Image' }}">
+                            </a>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="showcase-item">
+                            <img src="https://images.unsplash.com/photo-1551803091-e3e464601510?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80&h=400" alt="Trendy Look 1">
+                        </div>
+                        <div class="showcase-item">
+                            <img src="https://images.unsplash.com/photo-1525840996907-22953f119537?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80&h=400" alt="Youthful Vibe">
+                        </div>
+                        <div class="showcase-item">
+                            <img src="https://images.unsplash.com/photo-1508427953056-b00b8d78ebf5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80&h=400" alt="Fashion Detail">
+                        </div>
+                    {% endif %}
+                </div>
+                 <div class="showcase-cta-container">
+                    <a href="#" class="showcase-cta-button">View Lookbook</a>
+                </div>
+            </section>
+
+        </div> </div> <footer class="footer">
+        <div class="footer-content page-container">
+            <div class="footer-section about">
+                <h4>MindVibe Rentals</h4>
+                <p>Your premier destination for multi-brand dress rentals. Find the perfect look for every occasion.</p>
+                <div class="social-icons" style="margin-top:1rem;">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+                </div>
             </div>
-            {% empty %}
-            <p class="empty">ไม่เจอชุดที่ค้นหาเลยค่ะ ลองหาใหม่น้า</p>
-            {% endfor %}
+            <div class="footer-section links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#">Shop All Rentals</a></li>
+                    <li><a href="{% url 'clothes:new_arrivals' %}">New Arrivals</a></li> {# <<<< แก้ไข #}
+                    <li><a href="{% url 'clothes:popular_rentals' %}">Popular Rentals</a></li> {# <<<< แก้ไข #}
+                    <li><a href="#">Sale Items</a></li>
+                </ul>
+            </div>
+            <div class="footer-section support">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Rental Process</a></li>
+                    <li><a href="#">Size Guide</a></li>
+                </ul>
+            </div>
+             <div class="footer-section company">
+                <h4>Our Company</h4>
+                <ul>
+                    <li><a href="#">About MindVibe</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
         </div>
-    </div>
-
-    <footer class="footer">
-        <p>&copy; {% now "Y" %} MindVibe. All rights reserved.</p>
-        <p class="tagline-footer">✨ แฟชั่นสายคิ้วท์ เปลี่ยนลุคได้ทุกวัน ✨</p>
+        <div class="footer-bottom">
+            <p>&copy; {% now "Y" %} MindVibe Rentals. All Rights Reserved.</p>
+        </div>
     </footer>
 
 </body>
