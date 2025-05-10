@@ -1,87 +1,105 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en"> 
 <head>
     <meta charset="UTF-8">
-    <title>เข้าสู่ระบบ - MindVibe</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500&display=swap" rel="stylesheet">
+    <title>Login - MindVibe</title> 
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
             font-family: 'Kanit', sans-serif;
-            color: #333;
+            background-color: #FAF7F5; /* Muted Off-White/Pinkish */
+            color: #4A4A4A;
             display: flex;
-            flex-direction: column;
+            flex-direction: column; /* Align items (logo, tagline, form) vertically */
             align-items: center;
-            justify-content: center;
+            justify-content: center; /* Center content vertically */
             min-height: 100vh;
-            background: linear-gradient(to bottom right, #fce4ec, #e0f7f1);
-            padding: 2rem;
+            padding: 2rem; /* Add some padding around the content */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .logo {
-            font-size: 2.5rem;
+            font-size: 2.9rem;
             font-weight: 500;
-            color: #e83e8c;
-            margin-bottom: 0.5rem;
+            color: #2C3E50;    /* Dark Slate Gray */
+            margin-bottom: 0.75rem; /* Adjusted margin */
+            letter-spacing: 0.5px;
             text-align: center;
         }
 
         .tagline {
-            font-size: 1.1rem;
-            color: #20c997;
-            margin-bottom: 1.5rem;
+            font-size: 1.15rem;
+            color: #7F8C8D;    /* Grayish */
+            margin-bottom: 2rem; /* Increased margin before form container */
+            font-weight: 300;
+            line-height: 1.7;
             text-align: center;
         }
 
         .form-container {
-            max-width: 400px;
+            max-width: 420px; /* Slightly wider form */
             width: 100%;
-            padding: 2rem;
-            background-color: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 2.5rem; /* Increased padding */
+            background-color: #FFFFFF;
+            border-radius: 10px; /* Softer border radius */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); /* Softer shadow */
         }
 
         .form-container h1 {
-            font-size: 1.8rem;
-            color: #e83e8c;
+            font-size: 2rem; /* Larger heading */
+            font-weight: 500;
+            color: #2C3E50; /* Dark Slate Gray, consistent with logo */
             text-align: center;
             margin-top: 0;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem; /* Increased margin */
         }
 
-        form p {
-            margin-bottom: 1rem;
+        form p { /* Styling for Django form paragraphs */
+            margin-bottom: 1.2rem;
         }
 
         form p label {
             display: block;
-            margin-bottom: 0.3rem;
-            color: #555;
-            font-weight: 500;
+            margin-bottom: 0.5rem; /* Increased space */
+            color: #555555; /* Darker gray for labels */
+            font-weight: 400; /* Regular weight */
+            font-size: 0.9rem;
         }
 
         form input[type="text"],
         form input[type="password"],
         form input[type="email"] {
             width: 100%;
-            padding: 0.8rem 1rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            padding: 0.9rem 1rem; /* Adjusted padding */
+            border: 1px solid #D0D0D0; /* Lighter gray border */
+            border-radius: 6px; /* Consistent with buttons */
             font-family: 'Kanit', sans-serif;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            background-color: #FCFCFC; /* Very light background for inputs */
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .errorlist {
+        form input[type="text"]:focus,
+        form input[type="password"]:focus,
+        form input[type="email"]:focus {
+            outline: none;
+            border-color: #A7B8A5; /* Quiet Green on focus */
+            box-shadow: 0 0 0 3px rgba(167, 184, 165, 0.2); /* Subtle glow with Quiet Green */
+        }
+
+        .errorlist { /* For Django form errors */
             list-style-type: none;
             padding: 0;
-            color: #d9534f;
-            font-size: 0.9em;
-            margin-top: -0.5rem;
+            color: #E74C3C; /* Softer Red for errors */
+            font-size: 0.85em;
+            margin-top: -0.8rem; /* Adjust to align with input field */
             margin-bottom: 1rem;
         }
 
@@ -90,54 +108,61 @@
         }
 
         .submit-btn {
-            font-family: 'Kanit', sans-serif; /* ✅ ฟอนต์ตรงกับหน้าทั้งหมด */
-            font-size: 1rem;
-            padding: 0.8rem 2rem;
-            background-color: #e83e8c;
+            font-family: 'Kanit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500; /* Medium weight for button text */
+            padding: 0.9rem 1.5rem;
+            background-color: #A7B8A5; /* Quiet Green */
             color: white;
             border: none;
-            border-radius: 999px;
+            border-radius: 6px; /* Consistent radius */
             cursor: pointer;
             text-decoration: none;
-            transition: background 0.3s ease;
+            transition: background-color 0.25s ease, transform 0.15s ease;
             display: block;
             width: 100%;
-            margin-top: 1.5rem;
+            margin-top: 1.5rem; /* Space above button */
+            letter-spacing: 0.3px;
         }
 
         .submit-btn:hover {
-            background-color: #c93075;
+            background-color: #96A894; /* Darker Quiet Green */
+            transform: translateY(-2px);
         }
 
         .form-links {
             text-align: center;
-            margin-top: 1.5rem;
+            margin-top: 1.8rem; /* Increased space */
+            font-size: 0.9rem;
         }
 
         .form-links a {
-            color: #20c997;
+            color: #C89393; /* Darker Cashmere Rose for links for better contrast */
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 400;
+            transition: color 0.2s ease;
         }
 
         .form-links a:hover {
+            color: #B78282; /* Even darker Cashmere Rose on hover */
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="logo">MindVibe</div>
-    <div class="tagline">แฟชั่นสายคิ้วท์ เปลี่ยนลุคได้ทุกวัน 💖</div>
+    <div class="tagline">Elevate your style, effortlessly.</div> 
 
     <div class="form-container">
-        <h1>เข้าสู่ระบบ</h1>
+        <h1>Login</h1> 
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="submit-btn">เข้าสู่ระบบ</button>
+            {{ form.as_p }} 
+            <button type="submit" class="submit-btn">Login</button> 
         </form>
         <div class="form-links">
-            <a href="{% url 'signup' %}">ยังไม่มีบัญชี? สมัครสมาชิก</a>
+        
+            <a href="{% url 'signup' %}">Don't have an account? Sign Up</a> 
         </div>
     </div>
 </body>
