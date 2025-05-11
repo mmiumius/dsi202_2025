@@ -1,24 +1,208 @@
 from django.db import models
+from django.urls import reverse
+from django.core.exceptions import ValidationError
+import os
+from django.utils.text import slugify
+from django.utils import timezone  # เพิ่ม import นี้
 
-class Clothing(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    image = models.ImageField(upload_to='clothes/')
-    available = models.BooleanField(default=True)
+# Function to validate video file extension (ถ้ายังไม่ได้ย้ายมาไว้บนสุด ให้ย้ายมาครับ)
+def validate_video_extension(value):
+    ext = os.path.splitext(value.name)[1]
+    valid_extensions = ['.mp4', '.webm', '.ogg']
+    if not ext.lower() in valid_extensions:
+        raise ValidationError('Unsupported file extension for video. Allowed: .mp4, .webm, .ogg')
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True, help_text="ชื่อหมวดหมู่ (เช่น Evening Gowns, Casual Chic)")
+    slug = models.SlugField(max_length=120, unique=True, help_text="ส่วนที่แสดงใน URL (ภาษาอังกฤษ, ไม่มีเว้นวรรค, ตัวเล็ก)")
+    image = models.ImageField(
+        upload_to='category_covers/',
+        blank=True,
+        null=True,
+        help_text="รูปภาพหน้าปกของหมวดหมู่"
+    )
+    description = models.TextField(blank=True, null=True, help_text="คำอธิบายสั้นๆ (ถ้ามี)")
+    is_active = models.BooleanField(default=True, help_text="แสดงหมวดหมู่นี้บนเว็บไซต์หรือไม่?")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "หมวดหมู่สินค้า"
+        verbose_name_plural = "หมวดหมู่สินค้า"
+        ordering = ['name']
 
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        try:
+            return reverse('clothes:products_by_category', kwargs={'category_slug': self.slug})
+        except Exception as e:
+            print(f"Warning in Category.get_absolute_url: Could not reverse URL for category '{self.slug}'. URL 'clothes:products_by_category' might be missing or incorrect. Error: {e}")
+            try:
+                return reverse('clothes:home')  # Fallback to home
+            except:
+                return "#"  # Ultimate fallback
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+            original_slug = self.slug
+
+            # Check for uniqueness in Category
+            if self.__class__ == Category:
+                queryset = Category.objects.filter(slug=self.slug)
+            else:
+                queryset = Clothing.objects.filter(slug=self.slug)
+            
+            # If there's a conflict, append a counter
+            counter = 1
+            while queryset.exists():
+                self.slug = f"{original_slug}-{counter}"
+                if self.__class__ == Category:
+                    queryset = Category.objects.filter(slug=self.slug)
+                else:
+                    queryset = Clothing.objects.filter(slug=self.slug)
+                counter += 1
+
+        super().save(*args, **kwargs)
+
+class Clothing(models.Model):
+    category = models.ForeignKey(
+        Category,
+        related_name='clothes',  # ทำให้เราสามารถเรียก category.clothes.all() ได้
+        on_delete=models.SET_NULL,  # หรือ models.PROTECT ถ้าไม่อยากให้ลบ Category ที่มีสินค้าอยู่
+        null=True,  # อนุญาตให้สินค้ายังไม่อยู่ในหมวดหมู่ก็ได้ (แต่ควรจะเลือก)
+        blank=True,
+        help_text="เลือกหมวดหมู่สำหรับชุดนี้"
+    )
+    name = models.CharField(max_length=100, help_text="ชื่อชุด")
+    slug = models.SlugField(max_length=120, unique=True, blank=True, help_text="ส่วนที่แสดงใน URL (จะสร้างจากชื่ออัตโนมัติถ้าเว้นว่าง)")
+    description = models.TextField(help_text="รายละเอียดชุด, เนื้อผ้า, ขนาด, คำแนะนำในการเช่า (ถ้ามี)")
+    image = models.ImageField(upload_to='clothing_images/', help_text="รูปภาพหลักของชุด")
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,  # ตั้งเป็น True ชั่วคราวเพื่อให้ Migrate ข้อมูลเก่าได้ง่าย
+        blank=True,  # ตั้งเป็น True ชั่วคราว
+        help_text="ราคาเช่าต่อครั้ง/ต่อวัน (บาท)"
+    )
+    available_for_rent = models.BooleanField(default=True, help_text="ชุดนี้พร้อมให้เช่าหรือไม่?")
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "สินค้าเสื้อผ้า"
+        verbose_name_plural = "สินค้าเสื้อผ้า"
+        ordering = ['-created_at', 'name']  # เรียงตามวันที่สร้างล่าสุดก่อน แล้วตามชื่อ
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        try:
+            return reverse('clothes:detail', kwargs={'pk': self.pk})
+        except Exception as e:
+            print(f"Warning in Clothing.get_absolute_url: Could not reverse URL for clothing with pk '{self.pk}'. URL 'clothes:detail' might be missing or incorrect. Error: {e}")
+            return "#"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+            original_slug = self.slug
+
+            # Check for uniqueness in Category
+            if self.__class__ == Category:
+                queryset = Category.objects.filter(slug=self.slug)
+            else:
+                queryset = Clothing.objects.filter(slug=self.slug)
+            
+            # If there's a conflict, append a counter
+            counter = 1
+            while queryset.exists():
+                self.slug = f"{original_slug}-{counter}"
+                if self.__class__ == Category:
+                    queryset = Category.objects.filter(slug=self.slug)
+                else:
+                    queryset = Clothing.objects.filter(slug=self.slug)
+                counter += 1
+
+        super().save(*args, **kwargs)
+
+
+
+class HeroBanner(models.Model):
+    title = models.CharField(max_length=200, help_text="หัวข้อหลักบน Banner")
+    subtitle = models.TextField(blank=True, null=True, help_text="คำโปรยหรือข้อความย่อย")
+    BANNER_TYPE_CHOICES = [
+        ('image', 'Image Banner'),
+        ('video', 'Video Banner'),
+    ]
+    banner_type = models.CharField(
+        max_length=10,
+        choices=BANNER_TYPE_CHOICES,
+        default='image',
+        help_text="เลือกประเภทของ Banner"
+    )
+    image = models.ImageField(
+        upload_to='hero_banners/images/',
+        blank=True,
+        null=True,
+        help_text="รูปภาพปก (สำหรับ Image Banner หรือ Poster ของ Video)"
+    )
+    video = models.FileField(
+        upload_to='hero_banners/videos/',
+        blank=True,
+        null=True,
+        validators=[validate_video_extension],
+        help_text="ไฟล์ Video (แนะนำ .mp4, .webm, .ogg)"
+    )
+    link_url_name = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="ชื่อ URL pattern ที่จะให้ Banner นี้ลิงก์ไป (เช่น clothes:new_arrivals)"
+    )
+    is_active = models.BooleanField(default=False, help_text="เลือก True เพื่อให้ Banner นี้แสดงผล")
+    order = models.PositiveIntegerField(default=0, help_text="ลำดับการแสดงผล")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Hero Banner"
+        verbose_name_plural = "Hero Banners"
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        if hasattr(self, 'get_banner_type_display'):
+            return f"{self.title} ({self.get_banner_type_display()})"
+        return self.title
+
+    def get_link_url(self):
+        if self.link_url_name:
+            try:
+                if ':' in self.link_url_name:
+                    return reverse(self.link_url_name)
+                else:
+                    return reverse(f'clothes:{self.link_url_name}')
+            except Exception as e:
+                print(f"Error reversing URL '{self.link_url_name}': {e}")
+                return "#"
+        return "#"
+
+    def clean(self):
+        super().clean()
+        if self.banner_type == 'image' and not self.image:
+            raise ValidationError({'image': 'กรุณาอัปโหลดรูปภาพสำหรับ Image Banner'})
+        if self.banner_type == 'video' and not self.video:
+            raise ValidationError({'video': 'กรุณาอัปโหลดไฟล์ Video สำหรับ Video Banner'})
+
 class Cart(models.Model):
-    # อาจจะผูกกับ User หรือใช้ session_key
-    # user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
-    session_key = models.CharField(max_length=40, null=True, blank=True) # สำหรับ user ที่ยังไม่ login
+    session_key = models.CharField(max_length=40, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        # if self.user:
-        #     return f"Cart for {self.user.username}"
         return f"Cart (Session: {self.session_key})" if self.session_key else f"Cart (ID: {self.id})"
 
 class CartItem(models.Model):
@@ -30,41 +214,10 @@ class CartItem(models.Model):
     def __str__(self):
         return f"{self.quantity} x {self.clothing.name} in {self.cart}"
 
-    # เพิ่ม property เพื่อคำนวณราคารวมของ item นี้
     @property
     def total_price(self):
-        return self.clothing.price * self.quantity
+        if hasattr(self.clothing, 'price') and self.clothing.price is not None:
+            return self.clothing.price * self.quantity
+        return 0
 
-# -------------------------
-
-class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True, help_text="ชื่อหมวดหมู่ (เช่น Evening Gowns, Casual Chic)")
-    slug = models.SlugField(max_length=120, unique=True, help_text="ส่วนที่แสดงใน URL (ภาษาอังกฤษ, ไม่มีเว้นวรรค, ตัวเล็ก)")
-    image = models.ImageField(
-        upload_to='category_covers/',
-        blank=True,
-        null=True,
-        help_text="รูปภาพหน้าปกของหมวดหมู่ (ควรมีขนาดเหมาะสมสำหรับแสดงผลเป็น Cover)"
-    )
-    description = models.TextField(blank=True, null=True, help_text="คำอธิบายสั้นๆ (ถ้ามี)")
-    is_active = models.BooleanField(default=True, help_text="แสดงหมวดหมู่นี้บนเว็บไซต์หรือไม่?")
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = "หมวดหมู่ (Category)"
-        verbose_name_plural = "หมวดหมู่ (Categories)"
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        # แก้ไขให้ใช้ namespace 'clothes'
-        # ถ้าคุณมี URL pattern ชื่อ 'products_by_category' ใน clothes/urls.py
-        # ที่รับ category_slug เป็น argument
-        # ตรวจสอบให้แน่ใจว่าคุณได้ un-comment path สำหรับ 'products_by_category' ใน clothes/urls.py ด้วย
-        try:
-            return reverse('clothes:products_by_category', kwargs={'category_slug': self.slug})
-        except: # ถ้ายังไม่มี URL pattern นั้น หรือมีปัญหาในการ reverse ก็ให้ return # ไปก่อน
-            return "#"
+# (ถ้าคุณมี StyleInspirationImage Model ก็ใส่ต่อจากตรงนี้)

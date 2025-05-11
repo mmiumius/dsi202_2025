@@ -143,7 +143,7 @@
             border-radius: 12px;
             overflow: hidden;
             position: relative;
-            background-color: #e0e0e0;
+            background-color: #e0e0e0; /* Fallback background */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .hero-section-link:hover {
@@ -168,12 +168,12 @@
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0, 0, 0, 0.38);
+            background-color: rgba(0, 0, 0, 0.38); /* Overlay color */
             z-index: 1;
         }
         .hero-content {
             position: relative;
-            z-index: 2;
+            z-index: 2; /* Content above overlay */
         }
         .hero-section h1 {
             font-size: 2.8rem;
@@ -217,7 +217,7 @@
             overflow: hidden;
             position: relative;
             height: 350px;
-            background-color: #DDDDDD;
+            background-color: #DDDDDD; /* Fallback background for cards */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .category-card-link:hover {
@@ -355,7 +355,6 @@
             color: #7F8C8D;
         }
         .footer-bottom p { margin: 0.3rem 0; }
-
     </style>
 </head>
 <body>
@@ -363,12 +362,12 @@
     <nav class="navbar">
         <div class="navbar-left">
             <div class="navbar-logo">
-                <a href="{% url 'clothes:home' %}">MindVibe</a> {# <<<< แก้ไข #}
+                <a href="{% url 'clothes:home' %}">MindVibe</a>
             </div>
             <div class="navbar-categories">
                 <a href="#" class="active">Shop</a>
-                <a href="{% url 'clothes:new_arrivals' %}">New Arrivals</a> {# <<<< แก้ไข #}
-                <a href="{% url 'clothes:popular_rentals' %}">Popular Rentals</a> {# <<<< แก้ไข #}
+                <a href="{% url 'clothes:new_arrivals' %}">New Arrivals</a>
+                <a href="{% url 'clothes:popular_rentals' %}">Popular Rentals</a>
                 <a href="#" style="color: #A7B8A5;">Sale</a>
             </div>
         </div>
@@ -381,10 +380,10 @@
             <div class="navbar-auth">
                 {% if user.is_authenticated %}
                     <span class="user-greeting">Hi, {{ user.username|default:'User' }}</span>
-                    <a href="{% url 'clothes:logout' %}" class="btn-logout">Logout</a> {# <<<< แก้ไข #}
+                    <a href="{% url 'clothes:logout' %}" class="btn-logout">Logout</a>
                 {% else %}
-                    <a href="{% url 'clothes:login' %}" class="btn-login">Login</a> {# <<<< แก้ไข #}
-                    <a href="{% url 'clothes:signup' %}" class="btn-signup">Sign Up</a> {# <<<< แก้ไข #}
+                    <a href="{% url 'clothes:login' %}" class="btn-login">Login</a>
+                    <a href="{% url 'clothes:signup' %}" class="btn-signup">Sign Up</a>
                 {% endif %}
             </div>
         </div>
@@ -392,18 +391,26 @@
 
     <div class="main-content">
         <div class="page-container">
-            <a href="{% url 'clothes:new_arrivals' %}" class="hero-section-link" aria-label="Explore New Arrivals"> {# <<<< แก้ไข #}
-                <section class="hero-section" style="background-image: url('{% if hero_data.image.url %}{{ hero_data.image.url }}{% else %}https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80{% endif %}');">
+
+            {# --- START HERO SECTION (Hardcoded ด้วยรูป cv.jpg จาก static folder) --- #}
+            <a href="{% url 'clothes:new_arrivals' %}" class="hero-section-link" aria-label="Explore New Arrivals">
+                <section class="hero-section" style="background-image: url('{% static 'clothes/images/cv.jpg' %}');">
+                {# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #}
+                {# ตรวจสอบว่าคุณได้วางไฟล์ cv.jpg ไว้ใน clothes/static/clothes/images/ จริงๆ #}
                     <div class="hero-content">
-                        <h1>Find Your Next Vibe</h1>
-                        <p>Trendy outfits from top brands, ready for your moment. Rent the look, own the feeling.</p>
+                        <h1>Your Style, Your Vibe!</h1> {# << คุณสามารถเปลี่ยนข้อความนี้ได้ตามต้องการ #}
+                        <p>Discover amazing outfits for every occasion. Rent it, love it, return it!</p> {# << คุณสามารถเปลี่ยนข้อความนี้ได้ตามต้องการ #}
                     </div>
                 </section>
             </a>
+            {# --- END HERO SECTION --- #}
+
 
             <section class="shop-by-category">
                 <h2 class="section-title">Shop By Category</h2>
                 <div class="category-grid">
+                    {# ส่วนนี้ยังคงดึงข้อมูล Category จาก Admin เพราะคุณบอกว่ามัน OK แล้ว #}
+                    {# ตรวจสอบให้แน่ใจว่า View ส่ง 'categories' มาให้ Template และแต่ละ category มี .image.url #}
                     {% if categories %}
                         {% for category in categories %}
                         <a href="{{ category.get_absolute_url }}" class="category-card-link" aria-label="Shop {{ category.name }}">
@@ -415,6 +422,7 @@
                         </a>
                         {% endfor %}
                     {% else %}
+                        {# ถ้าคุณต้องการแสดง Category แบบ Static (Hardcode) ถ้า categories จาก Admin ไม่มา ให้ใส่โค้ดตรงนี้ #}
                         <p style="grid-column: 1 / -1; text-align: center; color: #7F8C8D;">No categories to display right now. Check back soon!</p>
                     {% endif %}
                 </div>
@@ -423,25 +431,27 @@
             <section class="image-showcase-section">
                 <h2 class="section-title">Style Inspiration</h2>
                 <div class="image-showcase-grid">
-                    {% if showcase_images %}
-                        {% for image_obj in showcase_images %}
-                        <div class="showcase-item">
-                            <a href="{{ image_obj.link_url|default:'#' }}">
-                                <img src="{{ image_obj.image.url }}" alt="{{ image_obj.alt_text|default:'Style Showcase Image' }}">
-                            </a>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="showcase-item">
-                            <img src="https://images.unsplash.com/photo-1551803091-e3e464601510?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80&h=400" alt="Trendy Look 1">
-                        </div>
-                        <div class="showcase-item">
-                            <img src="https://images.unsplash.com/photo-1525840996907-22953f119537?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80&h=400" alt="Youthful Vibe">
-                        </div>
-                        <div class="showcase-item">
-                            <img src="https://images.unsplash.com/photo-1508427953056-b00b8d78ebf5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80&h=400" alt="Fashion Detail">
-                        </div>
-                    {% endif %}
+                    {# --- START IMAGE SHOWCASE (Hardcoded ด้วยรูปจาก static folder) --- #}
+                    <div class="showcase-item">
+                        <a href="#"> {# << คุณสามารถใส่ลิงก์ที่นี่ได้ถ้าต้องการ #}
+                            <img src="{% static 'clothes/images/style_inspiration_1.jpg' %}" alt="Style Inspiration Look 1">
+                            {#                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #}
+                            {#                                  เปลี่ยนเป็นชื่อไฟล์รูปภาพของคุณ #}
+                        </a>
+                    </div>
+                    <div class="showcase-item">
+                        <a href="#">
+                            <img src="{% static 'clothes/images/style_inspiration_2.jpg' %}" alt="Style Inspiration Look 2">
+                            {#                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #}
+                        </a>
+                    </div>
+                    <div class="showcase-item">
+                        <a href="#">
+                            <img src="{% static 'clothes/images/style_inspiration_3.jpg' %}" alt="Style Inspiration Look 3">
+                            {#                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #}
+                        </a>
+                    </div>
+                    {# --- END IMAGE SHOWCASE --- #}
                 </div>
                  <div class="showcase-cta-container">
                     <a href="#" class="showcase-cta-button">View Lookbook</a>
@@ -463,8 +473,8 @@
                 <h4>Quick Links</h4>
                 <ul>
                     <li><a href="#">Shop All Rentals</a></li>
-                    <li><a href="{% url 'clothes:new_arrivals' %}">New Arrivals</a></li> {# <<<< แก้ไข #}
-                    <li><a href="{% url 'clothes:popular_rentals' %}">Popular Rentals</a></li> {# <<<< แก้ไข #}
+                    <li><a href="{% url 'clothes:new_arrivals' %}">New Arrivals</a></li>
+                    <li><a href="{% url 'clothes:popular_rentals' %}">Popular Rentals</a></li>
                     <li><a href="#">Sale Items</a></li>
                 </ul>
             </div>
