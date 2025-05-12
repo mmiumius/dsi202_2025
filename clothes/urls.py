@@ -26,11 +26,17 @@ urlpatterns = [
     path('new-arrivals/', views.new_arrivals_view, name='new_arrivals'),
     path('popular-rentals/', views.popular_rentals_view, name='popular_rentals'),
 
-    # -- (ลบ URL ที่ซ้ำซ้อนออก) --
-    # path('', views.home_view, name='home'),  # << บรรทัดนี้ถูกลบออกแล้ว
+    # URL สำหรับ Cart
+    path('cart/add/<int:pk>/', views.add_to_cart_view, name='add_to_cart'),
+    path('cart/', views.view_cart, name='cart_detail'),
+    # !!! เพิ่ม path สำหรับลบสินค้าออกจากตะกร้า !!!
+    # เราคาดว่า item_key จะเป็น string เช่น "12_3_days_M"
+    path('cart/remove/<str:item_key>/', views.remove_from_cart_view, name='cart_remove_item'),
 
-    # URL สำหรับตะกร้าสินค้า (ถ้าคุณจะเปิดใช้งานในอนาคต)
-    # path('cart/add/<int:pk>/', views.add_to_cart, name='add_to_cart'),
-    # path('cart/view/', views.view_cart, name='view_cart'),
-    # path('cart/remove/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
+    # !!! เพิ่ม path สำหรับหน้า Checkout (ตัวอย่าง) !!!
+    path('checkout/', views.checkout_view, name='checkout'),
+
+    path('order/place/', views.place_order_view, name='place_order'),
+
+
 ]

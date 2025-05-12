@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}ยืนยันการสั่งซื้อและชำระเงิน - MindVibe{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    body {
+        font-family: 'Kanit', sans-serif;
+        background-color: #FAF7F5;
+        color: #4A4A4A;
+    }
+    .checkout-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 2rem;
+    }
+    .checkout-header {
+        font-size: 1.8rem;
+        color: #2C3E50;
+        margin-bottom: 2rem;
+        font-weight: 500;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 1rem;
+    }
+    .order-summary-section, .shipping-info-section, .payment-section {
+        background-color: #FFFFFF;
+        border-radius: 10px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    .section-title {
+        font-size: 1.3rem;
+        color: #2C3E50;
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 0.8rem;
+    }
+
+    /* Order Summary Table */
+    .order-summary-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1rem;
+    }
+    .order-summary-table th, .order-summary-table td {
+        padding: 0.75rem 0;
+        text-align: left;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .order-summary-table th:last-child, .order-summary-table td:last-child {
+        text-align: right;
+    }
+    .order-summary-table tr:last-child td {
+        border-bottom: none;
+    }
+    .order-summary-table .product-name-checkout {
+        font-weight: 500;
+        font-size:0.95rem;
+    }
+    .order-summary-table .product-options-checkout {
+        font-size: 0.8rem;
+        color: #777;
+    }
+
+    /* Totals in Summary */
+    .summary-totals-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 1rem;
+    }
+    .summary-totals-list li {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        font-size: 1rem;
+    }
+    .summary-totals-list li.grand-total {
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: #2C3E50;
+        border-top: 1px solid #ddd;
+        margin-top: 0.5rem;
+        padding-top: 1rem;
+    }
+
+    /* Form Styling */
+    .checkout-form .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .checkout-form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #555;
+    }
+    .checkout-form input[type="text"],
+    .checkout-form input[type="email"],
+    .checkout-form input[type="tel"],
+    .checkout-form textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-family: 'Kanit', sans-serif;
+        font-size: 0.95rem;
+        box-sizing: border-box;
+    }
+    .checkout-form textarea {
+        min-height: 100px;
+    }
+
+    /* Payment Options */
+    .payment-options label {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        border: 1px solid #eee;
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+    }
+    .payment-options input[type="radio"] {
+        margin-right: 0.75rem;
+    }
+
+
+    .place-order-btn {
+        font-family: 'Kanit', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 500;
+        padding: 0.9rem 2rem;
+        background-color: #A7B8A5; /* Quiet Green */
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        text-decoration: none;
+        display: block; /* Make it block to take full width or set width */
+        width: 100%;
+        text-align: center;
+        transition: background-color 0.25s ease, transform 0.15s ease;
+        margin-top: 2rem;
+    }
+    .place-order-btn:hover {
+        background-color: #96A894;
+        transform: translateY(-2px);
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <h1 class="checkout-header">ยืนยันการสั่งซื้อและชำระเงิน</h1>
+
+    <form id="checkoutForm" method="POST" action="{% url 'clothes:place_order' %}"> {# **สำคัญ:** สร้าง URL และ View ชื่อ 'place_order' #}
+        {% csrf_token %}
+
+        <div class="row">
+            {# --- Left Column: Order Summary & Payment --- #}
+            <div class="col-md-7">
+                <div class="order-summary-section">
+                    <h2 class="section-title">สรุปรายการเช่า</h2>
+                    {% if cart %}
+                        <table class="order-summary-table">
+                            <tbody>
+                            {% for key, item_data in cart.items %}
+                                {# ตรวจสอบว่า item_data เป็น dictionary และมี key ที่ต้องการ #}
+                                {% if item_data.name and item_data.price_per_item and item_data.quantity %}
+                                <tr>
+                                    <td>
+                                        <div class="product-name-checkout">{{ item_data.name }}</div>
+                                        <div class="product-options-checkout">
+                                            ระยะเวลา: {{ item_data.rental_duration_text|default:"-" }} | ไซส์: {{ item_data.size|default:"-" }}
+                                        </div>
+                                    </td>
+                                    <td style="white-space: nowrap;">
+                                        {{ item_data.quantity|default:1 }} x {{ item_data.price_per_item|floatformat:2 }} THB
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <ul class="summary-totals-list">
+                            <li>
+                                <span>ยอดรวม (Subtotal)</span>
+                                <span>{{ subtotal|floatformat:2|intcomma }} THB</span>
+                            </li>
+                            {# เพิ่มส่วนลด, ค่าจัดส่ง ถ้ามี #}
+                            <li class="grand-total">
+                                <span>ยอดที่ต้องชำระ</span>
+                                <span>{{ subtotal|floatformat:2|intcomma }} THB</span> {# ตอนนี้ยังไม่มีค่าส่ง/ส่วนลด #}
+                            </li>
+                        </ul>
+                    {% else %}
+                        <p>ไม่มีสินค้าในตะกร้า</p>
+                    {% endif %}
+                </div>
+
+                <div class="payment-section">
+                    <h2 class="section-title">ช่องทางการชำระเงิน</h2>
+                    <div class="payment-options">
+                        <label>
+                            <input type="radio" name="payment_method" value="bank_transfer" checked>
+                            <i class="fas fa-university fa-fw me-2"></i> โอนเงินผ่านธนาคาร / QR Code
+                        </label>
+                        <label>
+                            <input type="radio" name="payment_method" value="credit_card_on_pickup">
+                            <i class="fas fa-credit-card fa-fw me-2"></i> บัตรเครดิต (ชำระเมื่อรับสินค้า)
+                        </label>
+                        {# เพิ่มช่องทางอื่นถ้ามี #}
+                    </div>
+                    {# อาจจะมีรายละเอียดเพิ่มเติมสำหรับแต่ละช่องทาง #}
+                </div>
+            </div>
+
+            {# --- Right Column: Shipping Information --- #}
+            <div class="col-md-5">
+                <div class="shipping-info-section">
+                    <h2 class="section-title">ข้อมูลการจัดส่งและติดต่อ</h2>
+                    <div class="checkout-form">
+                        <div class="form-group">
+                            <label for="id_full_name">ชื่อ-นามสกุล ผู้รับ</label>
+                            <input type="text" name="full_name" id="id_full_name" value="{{ request.user.get_full_name|default:'' }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_phone_number">เบอร์โทรศัพท์</label>
+                            <input type="tel" name="phone_number" id="id_phone_number" value="{{ request.user.profile.phone_number|default:'' }}" required> {# สมมติว่ามี profile model #}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_email">อีเมล (สำหรับยืนยันการสั่งซื้อ)</label>
+                            <input type="email" name="email" id="id_email" value="{{ request.user.email|default:'' }}" required>
+                        </div>
+                         <div class="form-group">
+                            <label for="id_shipping_address">ที่อยู่สำหรับจัดส่ง (ถ้าต้องการ)</label>
+                            <textarea name="shipping_address" id="id_shipping_address" rows="3">{{ request.user.profile.address|default:'' }}</textarea>
+                            <small class="form-text text-muted">สำหรับการเช่าชุด อาจจะไม่จำเป็นต้องกรอกถ้ามารับเอง</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_notes">หมายเหตุเพิ่มเติม (ถ้ามี)</label>
+                            <textarea name="notes" id="id_notes" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="place-order-btn">
+            <i class="fas fa-check-circle"></i> ยืนยันการเช่าและดำเนินการต่อ
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{# อาจจะมี JavaScript สำหรับ Validate Form หรือเลือกช่องทางชำระเงิน #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ตัวอย่าง: ถ้าเลือก "โอนเงิน" อาจจะแสดงเลขบัญชี
+        // หรือถ้าเลือก "บัตรเครดิต" อาจจะแสดงข้อความเพิ่มเติม
+    });
+</script>
+{% endblock %}

@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en"> {# Changed lang to en for consistency, assuming your detail page is also in English #}
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>{{ item.name }} - MindVibe</title>
@@ -70,23 +70,44 @@
         margin-bottom: 1.5rem;
     }
 
-    .price-tag {
-        font-size: 1.8rem; /* Larger price */
-        color: #A7B8A5; /* Quiet Green for price */
-        font-weight: 500;
-        margin-bottom: 1.5rem;
+    /* Styles for rental options (radio buttons) */
+    .rental-options-wrapper label.list-group-item {
+        cursor: pointer;
+        border: 1px solid #ddd;
+        padding: 0.75rem 1.25rem;
+        margin-bottom: -1px; /* Collapse borders */
+        border-radius: 0;
+        transition: background-color 0.2s ease;
     }
-     .price-tag .currency {
-        font-size: 1rem;
-        font-weight: 400;
-        margin-left: 0.2rem;
+    .rental-options-wrapper label.list-group-item:first-child {
+        border-top-left-radius: .25rem;
+        border-top-right-radius: .25rem;
+    }
+    .rental-options-wrapper label.list-group-item:last-child {
+        border-bottom-left-radius: .25rem;
+        border-bottom-right-radius: .25rem;
+        margin-bottom: 0;
+    }
+    .rental-options-wrapper label.list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+    .rental-options-wrapper input[type="radio"] {
+        margin-right: 0.5rem;
+    }
+     /* Style for selected radio button label */
+    .rental-options-wrapper input[type="radio"]:checked + span + span { /* Targets price span when radio is checked */
+        /* You can add specific styles for the text part if needed, or style the whole label */
+    }
+    .rental-options-wrapper label.selected-rental-option {
+        background-color: #e9ecef; /* Example: Slightly darker background for selected */
+        border-color: #A7B8A5;
     }
 
 
     .size-wrapper {
         margin-bottom: 1.5rem;
     }
-    .size-wrapper label {
+    .size-wrapper > label { /* Target direct child label */
         display: block;
         margin-bottom: 0.6rem;
         color: #555555;
@@ -123,7 +144,7 @@
         font-family: 'Kanit', sans-serif;
         font-size: 1rem;
         font-weight: 500;
-        padding: 0.9rem 2rem;
+        padding: 0.9rem 1.5rem; /* Adjusted padding */
         background-color: #2C3E50; /* Dark Slate Gray for primary action */
         color: white;
         border: none;
@@ -133,12 +154,17 @@
         display: inline-block;
         width: 100%; /* Full width button */
         text-align: center;
-        transition: background-color 0.25s ease, transform 0.15s ease;
+        transition: background-color 0.25s ease, transform 0.15s ease, opacity 0.25s ease;
         margin-top: 1rem; /* Space above button */
     }
-    .add-to-cart-btn:hover {
+    .add-to-cart-btn:hover:not(:disabled) {
         background-color: #1e2a38; /* Darker Slate Gray */
         transform: translateY(-2px);
+    }
+    .add-to-cart-btn:disabled {
+        background-color: #7f8c8d; /* Grey out when disabled */
+        cursor: not-allowed;
+        opacity: 0.7;
     }
     .add-to-cart-btn i { /* For icon */
         margin-left: 0.5rem;
@@ -205,9 +231,6 @@
         border: 1px solid #ffecb5;
     }
 
-
-    /* Navbar to be included from base or added here if not using extends */
-    /* Assuming navbar from home.html for context */
     .navbar {
         background-color: #FFFFFF;
         height: 70px;
@@ -241,14 +264,13 @@
 </head>
 <body>
 
-  {# Re-add Navbar HTML snippet for standalone detail page viewing during development #}
   <nav class="navbar">
     <div class="navbar-left">
         <div class="navbar-logo">
             <a href="{% url 'clothes:home' %}">MindVibe</a>
         </div>
         <div class="navbar-categories">
-            <a href="#">Shop</a> {# Adjust these links as needed or remove if detail page is simple #}
+            <a href="#">Shop</a>
             <a href="{% url 'clothes:new_arrivals' %}">New Arrivals</a>
         </div>
     </div>
@@ -292,46 +314,154 @@
       <h1>{{ item.name }}</h1>
       <p class="description">{{ item.description }}</p>
 
-      {% if item.price %} {# Assuming you might add a price field to your Clothing model #}
-        <p class="price-tag">{{ item.price|floatformat:2 }} <span class="currency">THB</span></p>
-      {% else %}
-         <p class="price-tag">Price on request</p> {# Or some other placeholder #}
-      {% endif %}
+        <form id="addToCartForm" method="POST" action="{% url 'clothes:add_to_cart' item.pk %}">
+            {% csrf_token %}
 
+            {% if item.price_3_days or item.price_5_days or item.price_7_days %}
+                <div class="rental-options-wrapper" style="margin-bottom: 1.5rem;">
+                    <h4 style="font-size: 1.1rem; font-weight: 500; color: #555; margin-bottom: 0.8rem;">เลือกแพ็กเกจเช่า:</h4>
+                    <div id="rentalDurationOptions">
+                        {% if item.price_3_days %}
+                        <label class="list-group-item">
+                            <input type="radio" name="rental_duration" value="3_days" data-price="{{ item.price_3_days|floatformat:2 }}" data-duration-text="3 วัน" required class="rental-duration-radio">
+                            <span>3 วัน - </span><span style="font-weight:bold;">{{ item.price_3_days|floatformat:2 }}</span><span class="currency" style="font-size: 0.85rem; color: #7f8c8d; margin-left: 0.2rem;"> THB</span>
+                        </label>
+                        {% endif %}
+                        {% if item.price_5_days %}
+                        <label class="list-group-item">
+                            <input type="radio" name="rental_duration" value="5_days" data-price="{{ item.price_5_days|floatformat:2 }}" data-duration-text="5 วัน" required class="rental-duration-radio">
+                            <span>5 วัน - </span><span style="font-weight:bold;">{{ item.price_5_days|floatformat:2 }}</span><span class="currency" style="font-size: 0.85rem; color: #7f8c8d; margin-left: 0.2rem;"> THB</span>
+                        </label>
+                        {% endif %}
+                        {% if item.price_7_days %}
+                        <label class="list-group-item">
+                            <input type="radio" name="rental_duration" value="7_days" data-price="{{ item.price_7_days|floatformat:2 }}" data-duration-text="7 วัน" required class="rental-duration-radio">
+                            <span>7 วัน - </span><span style="font-weight:bold;">{{ item.price_7_days|floatformat:2 }}</span><span class="currency" style="font-size: 0.85rem; color: #7f8c8d; margin-left: 0.2rem;"> THB</span>
+                        </label>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <p class="price-tag" style="color: #c0392b;">Price on request</p>
+                <p style="font-size: 0.9rem; color: #7f8c8d; margin-top: -1rem; margin-bottom: 1.5rem;">
+                    กรุณาติดต่อสอบถามข้อมูลราคา
+                </p>
+            {% endif %}
 
-      <div class="size-wrapper">
-        <label for="size">Select Size:</label> {# Changed to English #}
-        <div class="size-buttons">
-          <button class="size-btn" onclick="selectSize(this, 'S')">S</button>
-          <button class="size-btn" onclick="selectSize(this, 'M')">M</button>
-          <button class="size-btn" onclick="selectSize(this, 'L')">L</button>
-          <button class="size-btn" onclick="selectSize(this, 'XL')">XL</button>
-        </div>
-        <input type="hidden" id="selected_size" name="selected_size"> {# Hidden input for selected size #}
-      </div>
+            <div class="size-wrapper">
+                <label>Select Size:</label>
+                <div class="size-buttons">
+                    <button type="button" class="size-btn" onclick="selectSize(this, 'S')">S</button>
+                    <button type="button" class="size-btn" onclick="selectSize(this, 'M')">M</button>
+                    <button type="button" class="size-btn" onclick="selectSize(this, 'L')">L</button>
+                    <button type="button" class="size-btn" onclick="selectSize(this, 'XL')">XL</button>
+                </div>
+                <input type="hidden" id="selected_size" name="selected_size" value=""> {# Value will be set by JS #}
+            </div>
 
-      {# Ensure add_to_cart URL is correctly namespaced if uncommented in urls.py #}
-      <a href="{% if item.available %}{% url 'clothes:add_to_cart' item.pk %}{% else %}#{% endif %}"
-         class="add-to-cart-btn {% if not item.available %}disabled{% endif %}">
-        {% if item.available %}
-            Add to Cart <i class="fas fa-cart-plus"></i> {# Changed to English & icon #}
-        {% else %}
-            Currently Unavailable
-        {% endif %}
-      </a>
+            <div id="priceSummary" style="margin-bottom: 1.5rem; padding: 1rem; background-color: #f8f9fa; border-radius: 6px; display:none;">
+                <h5 style="margin-bottom: 0.5rem; font-size:1.1rem; color: #2C3E50;">สรุปรายการ:</h5>
+                <p style="margin-bottom:0.2rem; font-size:0.95rem;"><strong>แพ็กเกจ:</strong> <span id="summaryDuration"></span></p>
+                <p style="margin-bottom:0.2rem; font-size:0.95rem;"><strong>ไซส์:</strong> <span id="summarySize"></span></p>
+                <p style="margin-bottom:0; font-size:1.05rem; color: #A7B8A5;"><strong>ราคา:</strong> <span id="summaryPrice" style="font-weight:bold;">0.00</span> THB</p>
+            </div>
 
-      <a href="{% url 'clothes:home' %}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a> {# Changed to English & icon #}
+            {% if item.available_for_rent %}
+                <button type="submit" id="submitAddToCartBtn" class="add-to-cart-btn" disabled>
+                    เลือกแพ็กเกจและไซส์
+                </button>
+            {% else %}
+                <button type="button" class="add-to-cart-btn" disabled>
+                    Currently Unavailable
+                </button>
+            {% endif %}
+        </form>
+
+      <a href="{% url 'clothes:home' %}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
     </div>
   </div>
 
   <script>
-    function selectSize(btn, sizeValue) {
-      const buttons = document.querySelectorAll('.size-btn');
-      buttons.forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      document.getElementById('selected_size').value = sizeValue; // Store selected size
-      console.log('Selected size:', sizeValue); // For debugging
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        let selectedRentalDurationText = null;
+        let selectedRentalPrice = 0;
+        let selectedSizeValue = null;
+
+        const rentalDurationRadios = document.querySelectorAll('.rental-duration-radio');
+        const rentalOptionLabels = document.querySelectorAll('.rental-options-wrapper .list-group-item'); // For styling selected label
+        const sizeButtons = document.querySelectorAll('.size-btn');
+        const hiddenSizeInput = document.getElementById('selected_size');
+        const addToCartButton = document.getElementById('submitAddToCartBtn');
+        const addToCartForm = document.getElementById('addToCartForm');
+
+        const priceSummaryDiv = document.getElementById('priceSummary');
+        const summaryDurationSpan = document.getElementById('summaryDuration');
+        const summarySizeSpan = document.getElementById('summarySize');
+        const summaryPriceSpan = document.getElementById('summaryPrice');
+
+        // Function to handle size selection
+        window.selectSize = function(btn, sizeValue) { // Make it globally accessible due to onclick
+            sizeButtons.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            hiddenSizeInput.value = sizeValue;
+            selectedSizeValue = sizeValue;
+            updatePriceSummaryAndButton();
+        }
+
+        // Event listener for rental duration selection
+        rentalDurationRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    selectedRentalDurationText = this.dataset.durationText;
+                    selectedRentalPrice = parseFloat(this.dataset.price);
+                    
+                    // Style the selected label
+                    rentalOptionLabels.forEach(label => label.classList.remove('selected-rental-option'));
+                    this.closest('label').classList.add('selected-rental-option');
+
+                    updatePriceSummaryAndButton();
+                }
+            });
+        });
+
+        function updatePriceSummaryAndButton() {
+            if (selectedRentalDurationText && selectedSizeValue && selectedRentalPrice > 0) {
+                summaryDurationSpan.textContent = selectedRentalDurationText;
+                summarySizeSpan.textContent = selectedSizeValue;
+                summaryPriceSpan.textContent = selectedRentalPrice.toFixed(2);
+                priceSummaryDiv.style.display = 'block';
+
+                if (addToCartButton) {
+                    addToCartButton.disabled = false;
+                    addToCartButton.innerHTML = `เพิ่มลงตะกร้า (${selectedRentalPrice.toFixed(2)} THB) <i class="fas fa-cart-plus"></i>`;
+                }
+            } else {
+                priceSummaryDiv.style.display = 'none';
+                if (addToCartButton) {
+                    addToCartButton.disabled = true;
+                    addToCartButton.innerHTML = 'เลือกแพ็กเกจและไซส์';
+                }
+            }
+        }
+
+        if (addToCartForm && addToCartButton) {
+            addToCartForm.addEventListener('submit', function(event) {
+                // Check if rental duration is selected
+                const selectedRentalRadio = document.querySelector('input[name="rental_duration"]:checked');
+
+                if (!selectedRentalRadio || !selectedSizeValue) {
+                    event.preventDefault();
+                    alert('กรุณาเลือกแพ็กเกจเช่าและไซส์ให้ครบถ้วน');
+                } else if (selectedRentalPrice <= 0) {
+                    event.preventDefault();
+                    alert('ราคาแพ็กเกจที่เลือกไม่ถูกต้อง');
+                }
+                // Form will submit if all checks pass
+            });
+        }
+        // Initialize button state (important if page reloads with some selections, though not typical here)
+         updatePriceSummaryAndButton();
+    });
   </script>
 
 </body>

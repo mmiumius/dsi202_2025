@@ -14,6 +14,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'clothes',
+    'django.contrib.humanize',  # <--- เพิ่มบรรทัดนี้เข้าไป
+
 ]
 
 MIDDLEWARE = [

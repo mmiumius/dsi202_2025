@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}ตะกร้าสินค้า - MindVibe{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    body {
+        font-family: 'Kanit', sans-serif;
+        background-color: #FAF7F5;
+        color: #4A4A4A;
+        padding-bottom: 150px;
+    }
+
+    .cart-container {
+        max-width: 1100px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: #FFFFFF;
+        border-radius: 10px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .cart-header {
+        font-size: 1.8rem;
+        color: #2C3E50;
+        margin-bottom: 2rem;
+        font-weight: 500;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 1rem;
+    }
+
+    .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 2rem;
+    }
+
+    .cart-table thead th {
+        text-align: left;
+        padding: 0.8rem 1rem;
+        background-color: #f8f9fa;
+        color: #555;
+        font-weight: 500;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .cart-table tbody td {
+        padding: 1.2rem 1rem;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+
+    .cart-table th.select-all-header,
+    .cart-table td.select-item-cell {
+        width: 50px;
+        text-align: center;
+    }
+
+    .product-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .product-image {
+        width: 80px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 6px;
+        margin-right: 1.5rem;
+        border: 1px solid #eee;
+    }
+
+    .product-details .product-name {
+        font-weight: 500;
+        color: #2C3E50;
+        font-size: 1.05rem;
+        display: block;
+        margin-bottom: 0.3rem;
+        text-decoration: none;
+    }
+
+    .product-details .product-name:hover {
+        color: #A7B8A5;
+    }
+
+    .product-details .product-options {
+        font-size: 0.85rem;
+        color: #777;
+    }
+
+    .product-price .item-price-per-unit,
+    .product-subtotal .item-line-total {
+        font-weight: 500;
+        color: #4A4A4A;
+        font-size: 1rem;
+    }
+
+    .remove-item-btn {
+        color: #e74c3c;
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+
+    .remove-item-btn:hover {
+        color: #c0392b;
+    }
+
+    .cart-footer-summary {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #FFFFFF;
+        border-top: 1px solid #ddd;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 999;
+    }
+
+    .cart-footer-summary .select-all-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .cart-footer-summary .select-all-container label {
+        margin-left: 0.5rem;
+        font-size: 0.9rem;
+        color: #555;
+    }
+
+    .cart-footer-summary .totals-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        text-align: right;
+    }
+
+    .cart-footer-summary .totals-info .total-amount-text {
+        font-size: 0.9rem;
+        color: #555;
+    }
+
+    .cart-footer-summary .totals-info .total-amount-value {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #A7B8A5;
+    }
+
+    .cart-footer-summary .checkout-action .action-btn {
+        font-family: 'Kanit', sans-serif;
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 0.8rem 2rem;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.25s ease;
+        background-color: #A7B8A5;
+        color: white;
+        min-width: 150px;
+    }
+
+    .cart-footer-summary .checkout-action .action-btn:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    .cart-footer-summary .checkout-action .action-btn:hover:not(:disabled) {
+        background-color: #96A894;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cart-container">
+    <h1 class="cart-header">ตะกร้าสินค้าของคุณ</h1>
+
+    {% if request.session.cart %}
+        <form id="cartForm" method="POST" action="{% url 'clothes:checkout' %}">
+            {% csrf_token %}
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th class="select-all-header">
+                            <input type="checkbox" id="selectAllItems" title="เลือกทั้งหมด">
+                        </th>
+                        <th style="width: 45%;">สินค้า</th>
+                        <th style="text-align: center;">ราคา/หน่วย</th>
+                        <th style="text-align: center;">จำนวน</th>
+                        <th style="text-align: right;">ราคารวม</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% with cart=request.session.cart %}
+                    {% for key, item_data in cart.items %}
+                    <tr class="cart-item-row" data-item-key="{{ key }}" data-item-price="{{ item_data.price_per_item }}">
+                        <td class="select-item-cell">
+                            <input type="checkbox" class="cart-item-select" name="selected_items" value="{{ key }}">
+                        </td>
+                        <td>
+                            <div class="product-info">
+                                <img src="{{ item_data.image_url|default:'https://placehold.co/80x100/E0E0E0/A0A0A0?text=No+Image' }}" alt="{{ item_data.name }}" class="product-image">
+                                <div class="product-details">
+                                    <span class="product-name">{{ item_data.name }}</span>
+                                    <div class="product-options">
+                                        <span>ระยะเวลา: {{ item_data.rental_duration_text }}</span> |
+                                        <span>ไซส์: {{ item_data.size }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: center;" class="product-price">
+                            <span class="item-price-per-unit">{{ item_data.price_per_item|floatformat:2 }}</span> THB
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="item-quantity">{{ item_data.quantity }}</span>
+                        </td>
+                        <td style="text-align: right;" class="product-subtotal">
+                            <span class="item-line-total">0.00</span> THB
+                        </td>
+                        <td style="text-align: center;">
+                            <a href="{% url 'clothes:cart_remove_item' key %}" title="นำออกจากตะกร้า" class="remove-item-link">
+                                <button type="button" class="remove-item-btn">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endwith %}
+                </tbody>
+            </table>
+        </form>
+    {% else %}
+        <p style="text-align: center; font-size: 1.2rem;">ยังไม่มีสินค้าในตะกร้า</p>
+    {% endif %}
+</div>
+
+<div class="cart-footer-summary">
+    <div class="select-all-container">
+        <input type="checkbox" id="selectAllFooter">
+        <label for="selectAllFooter">เลือกทั้งหมด</label>
+    </div>
+    <div class="totals-info">
+        <span class="total-amount-text">ยอดรวม:</span>
+        <span class="total-amount-value" id="cartTotal">0.00 THB</span>
+    </div>
+    <div class="checkout-action">
+        <button class="action-btn" type="submit" form="cartForm" disabled>ดำเนินการเช่า</button>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const selectAll = document.getElementById("selectAllItems");
+    const selectAllFooter = document.getElementById("selectAllFooter");
+    const itemCheckboxes = document.querySelectorAll(".cart-item-select");
+    const totalDisplay = document.getElementById("cartTotal");
+    const checkoutBtn = document.querySelector(".action-btn");
+
+    function updateTotal() {
+        let total = 0;
+        itemCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                const row = checkbox.closest("tr");
+                const price = parseFloat(row.dataset.itemPrice);
+                const quantity = parseInt(row.querySelector(".item-quantity").innerText);
+                const lineTotal = price * quantity;
+                row.querySelector(".item-line-total").innerText = lineTotal.toFixed(2);
+                total += lineTotal;
+            } else {
+                row.querySelector(".item-line-total").innerText = "0.00";
+            }
+        });
+        totalDisplay.innerText = total.toFixed(2) + " THB";
+        checkoutBtn.disabled = total === 0;
+    }
+
+    selectAll.addEventListener("change", () => {
+        itemCheckboxes.forEach(cb => cb.checked = selectAll.checked);
+        selectAllFooter.checked = selectAll.checked;
+        updateTotal();
+    });
+
+    selectAllFooter.addEventListener("change", () => {
+        itemCheckboxes.forEach(cb => cb.checked = selectAllFooter.checked);
+        selectAll.checked = selectAllFooter.checked;
+        updateTotal();
+    });
+
+    itemCheckboxes.forEach(cb => {
+        cb.addEventListener("change", updateTotal);
+    });
+
+    updateTotal();
+});
+</script>
+{% endblock %}
