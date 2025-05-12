@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}การสั่งซื้อสำเร็จ - MindVibe{% endblock %}
+
+{% block content %}
+<div class="container" style="text-align: center; padding: 4rem 2rem;">
+    <i class="fas fa-check-circle" style="font-size: 5rem; color: #A7B8A5; margin-bottom: 1.5rem;"></i>
+    <h1 style="color: #2C3E50; margin-bottom: 1rem;">การสั่งซื้อของคุณสำเร็จแล้ว!</h1>
+    <p style="font-size: 1.1rem; color: #555; margin-bottom: 0.5rem;">ขอบคุณที่ใช้บริการเช่าชุดกับ MindVibe ค่ะ</p>
+    <p style="font-size: 1rem; color: #777; margin-bottom: 2rem;">
+        เราได้บันทึกรายการเช่าของคุณแล้ว และจะติดต่อกลับเพื่อยืนยันรายละเอียดการรับชุดและชำระเงิน (ถ้ายังไม่ได้ชำระ) โดยเร็วที่สุด
+    </p>
+    {# คุณอาจจะต้องการแสดง Order ID หรือข้อมูลอื่นๆ ที่นี่ โดยส่งมาจาก view #}
+    {% if order_id %}
+        <p style="font-size: 0.9rem; color: #777;">หมายเลขอ้างอิงการเช่าของคุณคือ: <strong>{{ order_id }}</strong></p>
+    {% endif %}
+    <div style="margin-top: 2.5rem;">
+        <a href="{% url 'clothes:home' %}" class="action-btn" style="background-color: #A7B8A5; color:white; text-decoration:none; padding: 0.8rem 2rem; border-radius:6px; font-weight:500;">กลับไปหน้าแรก</a>
+        {# หรือ <a href="{% url 'clothes:my_orders' %}" class="action-btn">ดูรายการเช่าของฉัน</a> #}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+{# เพิ่ม CSS ถ้าต้องการ #}
+<style>
+    .action-btn { /* สไตล์ปุ่มเบื้องต้น */
+        font-family: 'Kanit', sans-serif;
+        transition: background-color 0.25s ease, transform 0.15s ease;
+    }
+    .action-btn:hover {
+         transform: translateY(-2px);
+         background-color: #96A894 !important; /* Darker for hover */
+    }
+</style>
+{% endblock %}

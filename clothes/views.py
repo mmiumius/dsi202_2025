@@ -164,7 +164,7 @@ def add_to_cart_view(request, pk):
 
         if cart_item_key in cart:
              cart[cart_item_key]['quantity'] = cart.get(cart_item_key, {}).get('quantity', 0) + 1
-             messages.info(request, f"อัปเดตจำนวน '{clothing_item.name}' ({duration_text_for_cart}, ไซส์ {selected_size}) ในตะกร้าแล้ว")
+             #messages.info(request, f"อัปเดตจำนวน '{clothing_item.name}' ({duration_text_for_cart}, ไซส์ {selected_size}) ในตะกร้าแล้ว")
         else:
             cart[cart_item_key] = cart_item_data
             # messages.success(request, f"เพิ่ม '{clothing_item.name}' ({duration_text_for_cart}, ไซส์ {selected_size}) ลงในตะกร้าแล้ว!")
@@ -295,10 +295,30 @@ def place_order_view(request):
             del request.session['cart']
             request.session.modified = True
 
-        messages.success(request, "การสั่งซื้อของคุณสำเร็จแล้ว! ขอบคุณที่ใช้บริการ")
+        #messages.success(request, "การสั่งซื้อของคุณสำเร็จแล้ว! ขอบคุณที่ใช้บริการ")
         # 6. Redirect ไปยังหน้า Thank You หรือหน้าแสดงรายละเอียดการสั่งซื้อ
         return redirect('clothes:order_thank_you') # **สำคัญ:** สร้าง URL และ View ชื่อ 'order_thank_you'
     else:
         # ถ้าไม่ใช่ POST request ให้ redirect กลับไปหน้า checkout
         messages.warning(request, "การดำเนินการไม่ถูกต้อง")
         return redirect('clothes:checkout')
+    
+def order_thank_you_view(request):
+    # คุณอาจจะต้องการดึง Order ID ล่าสุดที่เพิ่งสร้าง (ถ้ามี) มาแสดงผล
+    # order_id = request.session.get('last_order_id', None) # ตัวอย่าง
+    # context = {'order_id': order_id}
+    # if order_id in request.session:
+    #     del request.session['last_order_id'] # ลบออกจาก session หลังแสดงผล
+    context = {} # ตอนนี้ยังไม่มี context พิเศษ
+    return render(request, 'clothes/order_thank_you.html', context)
+
+# ใน clothes/views.py
+def new_arrivals_view(request):
+    # ... (logic การดึงข้อมูล items) ...
+    context = {
+        'page_title': 'New Arrivals',
+        'items': items,
+        'categories': Category.objects.filter(is_active=True).order_by('name'),
+    }
+    # !!! ปัญหาอยู่ที่บรรทัดนี้ Django หา template นี้ไม่เจอ !!!
+    return render(request, 'clothes/product_list.html', context)

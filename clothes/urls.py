@@ -29,14 +29,15 @@ urlpatterns = [
     # URL สำหรับ Cart
     path('cart/add/<int:pk>/', views.add_to_cart_view, name='add_to_cart'),
     path('cart/', views.view_cart, name='cart_detail'),
-    # !!! เพิ่ม path สำหรับลบสินค้าออกจากตะกร้า !!!
-    # เราคาดว่า item_key จะเป็น string เช่น "12_3_days_M"
-    path('cart/remove/<str:item_key>/', views.remove_from_cart_view, name='cart_remove_item'),
+    path('cart/remove/<str:item_key>/', views.remove_from_cart_view, name='cart_remove_item'), # อันนี้มีแล้ว ถูกต้อง
 
-    # !!! เพิ่ม path สำหรับหน้า Checkout (ตัวอย่าง) !!!
-    path('checkout/', views.checkout_view, name='checkout'),
+    # URL สำหรับ Checkout
+    path('checkout/', views.checkout_view, name='checkout'), # อันนี้มีแล้ว ถูกต้อง
 
+    # !!! เพิ่ม path สำหรับการยืนยันการสั่งซื้อ (Place Order) !!!
     path('order/place/', views.place_order_view, name='place_order'),
 
-
+    # !!! (แนะนำ) เพิ่ม path สำหรับหน้า Thank You (ตัวอย่าง) !!!
+    # คุณจะต้องสร้าง view 'order_thank_you_view' และ template สำหรับหน้านี้ด้วย
+    path('order/thank-you/', views.order_thank_you_view, name='order_thank_you'),
 ]

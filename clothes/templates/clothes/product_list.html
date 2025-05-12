@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% load static %}
+
+{# กำหนด title ของหน้าตาม page_title ที่ส่งมาจาก view #}
+{% block title %}{{ page_title|default:"สินค้า" }} - MindVibe{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    /* --- คัดลอก CSS สำหรับ Product Grid และ Product Card มาจาก template อื่นของคุณได้ --- */
+    /* --- เช่น จาก category_products.html หรือ home.html ถ้ามีส่วนแสดงสินค้าคล้ายกัน --- */
+    /* --- หรือจะใช้ CSS ที่ผมเคยให้ตัวอย่างไปก็ได้ครับ --- */
+
+    body {
+        font-family: 'Kanit', sans-serif;
+        background-color: #FAF7F5;
+        color: #4A4A4A;
+    }
+    .page-container {
+        max-width: 1200px; /* Or your preferred max-width */
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+    @media (min-width: 768px) {
+        .page-container {
+            padding: 2rem;
+        }
+    }
+    .section-title {
+        text-align: center;
+        color: #2C3E50;
+        margin-top: 1.5rem;
+        margin-bottom: 2.5rem;
+        font-size: 1.9rem;
+        font-weight: 500;
+    }
+
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjust minmax as needed */
+        gap: 2rem;
+        margin-bottom: 3.5rem;
+    }
+
+    .product-card {
+        background-color: #FFFFFF;
+        border-radius: 10px;
+        box-shadow: 0 6px 18px rgba(44, 62, 80, 0.08); /* Softer shadow */
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px); /* Slightly less lift */
+        box-shadow: 0 10px 25px rgba(44, 62, 80, 0.15); /* Slightly larger shadow on hover */
+    }
+
+    .product-card-image-wrapper {
+        width: 100%;
+        height: 300px; /* Adjust height as needed */
+        overflow: hidden;
+        background-color: #f0f0f0; /* Placeholder background */
+    }
+
+    .product-card-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.35s ease;
+    }
+
+    .product-card:hover .product-card-image {
+        transform: scale(1.05); /* Subtle zoom */
+    }
+
+    .product-card-info {
+        padding: 1.2rem;
+        text-align: center; /* Or left-align if preferred */
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Pushes button down if name is short */
+    }
+
+    .product-card-name {
+        font-size: 1.05rem; /* Slightly smaller */
+        font-weight: 500;
+        color: #2C3E50;
+        line-height: 1.4;
+        margin-bottom: 0.7rem; /* Space between name and price/button */
+        /* height: 2.8em; */ /* Optional: to keep name area consistent height (2 lines) */
+        /* overflow: hidden; */ /* Optional: if using fixed height for name */
+    }
+
+    /* Optional: Display price on product card if available */
+    .product-card-price {
+        font-size: 0.95rem;
+        color: #A7B8A5; /* Quiet Green */
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+
+    .product-card-button {
+        font-family: 'Kanit', sans-serif;
+        background-color: #A7B8A5;
+        color: white;
+        padding: 0.6rem 1.2rem;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 400;
+        font-size: 0.9rem;
+        transition: background-color 0.25s ease, transform 0.15s ease;
+        border: none;
+        display: inline-block;
+        margin-top: auto; /* Pushes button to the bottom */
+        align-self: center;
+        cursor: pointer;
+    }
+
+    .product-card-button:hover {
+        background-color: #96A894;
+        transform: translateY(-1px);
+    }
+
+    .no-items-message {
+        text-align: center;
+        padding: 3rem 1rem;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        font-size: 1.2rem;
+        color: #7F8C8D;
+    }
+    .no-items-message i {
+        font-size: 3rem; /* Larger icon */
+        color: #d0d0d0;
+        margin-bottom: 1rem;
+        display: block; /* Make icon block for centering */
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    {# แสดง title ของหน้า (เช่น "New Arrivals" หรือ "Popular Rentals") #}
+    <h1 class="section-title">{{ page_title|default:"สินค้าทั้งหมด" }}</h1>
+
+    {% if items %}
+        <div class="product-grid">
+            {% for product_item in items %} {# เปลี่ยนชื่อตัวแปรใน loop เป็น product_item #}
+            <div class="product-card">
+                <a href="{% url 'clothes:detail' product_item.pk %}" style="text-decoration: none; color: inherit; display:contents;">
+                    <div class="product-card-image-wrapper">
+                        {% if product_item.image %}
+                            <img src="{{ product_item.image.url }}" alt="{{ product_item.name }}" class="product-card-image">
+                        {% else %}
+                            <img src="{% static 'clothes/images/placeholder_product.png' %}" alt="Placeholder for {{ product_item.name }}" class="product-card-image"> {# สร้าง placeholder นี้ถ้ายังไม่มี #}
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="product-card-info">
+                    <div> {# Wrapper for name and price to control spacing from button #}
+                        <a href="{% url 'clothes:detail' product_item.pk %}" style="text-decoration: none; color: inherit;">
+                            <h3 class="product-card-name">{{ product_item.name }}</h3>
+                        </a>
+                        {# Optional: Display a starting price if applicable #}
+                        {% if product_item.price_3_days %}
+                            <p class="product-card-price">เริ่มต้น {{ product_item.price_3_days|floatformat:0|intcomma }} บาท</p>
+                        {% elif product_item.price_5_days %}
+                            <p class="product-card-price">เริ่มต้น {{ product_item.price_5_days|floatformat:0|intcomma }} บาท</p>
+                        {% elif product_item.price_7_days %}
+                            <p class="product-card-price">เริ่มต้น {{ product_item.price_7_days|floatformat:0|intcomma }} บาท</p>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'clothes:detail' product_item.pk %}" class="product-card-button">ดูรายละเอียด</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-items-message">
+            <i class="fas fa-tshirt"></i>
+            <p>ขออภัยค่ะ ขณะนี้ยังไม่มีสินค้า {{ page_title|lower }} ที่จะแสดง</p>
+            <p style="margin-top: 1.5rem; font-size: 1rem;">
+                ลอง <a href="{% url 'clothes:home' %}" style="color: #A7B8A5; font-weight:500; text-decoration: underline;">กลับไปหน้าแรก</a> หรือเลือกดูหมวดหมู่อื่นๆ นะคะ
+            </p>
+        </div>
+    {% endif %}
+
+    {# Optional: Pagination if you have many items #}
+    {# {% if items.has_other_pages %} ... {% endif %} #}
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{# JavaScript ถ้าจำเป็นสำหรับหน้านี้ #}
+{% endblock %}
