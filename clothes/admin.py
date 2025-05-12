@@ -4,34 +4,26 @@ from .models import Clothing, Category, HeroBanner # , StyleInspirationImage (�
 
 @admin.register(Clothing)
 class ClothingAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'price', 'available_for_rent', 'image_preview', 'slug', 'updated_at')
+    list_display = ('name', 'category', 'available_for_rent', 'slug', 'updated_at')
     list_filter = ('available_for_rent', 'category', 'updated_at')
     search_fields = ('name', 'description', 'slug')
-    list_editable = ('price', 'available_for_rent', 'category') # เพิ่ม category ให้แก้ไขได้จากหน้า list
-    prepopulated_fields = {'slug': ('name',)} # สร้าง slug จาก name อัตโนมัติ
+    list_editable = ('available_for_rent',)
+    prepopulated_fields = {'slug': ('name',)}
     ordering = ('-updated_at',)
-    
+
     fieldsets = (
         (None, {
-            'fields': ('name', 'slug', 'category', 'price')
+            'fields': ('name', 'slug', 'category')
         }),
-        ('Details & Media', { # เปลี่ยนชื่อ Section
+        ('ราคาเช่าตามจำนวนวัน', {
+            'fields': ('price_3_days', 'price_5_days', 'price_7_days')
+        }),
+        ('รายละเอียดเพิ่มเติม', {
             'fields': ('description', 'image', 'available_for_rent')
-            # เพิ่มฟิลด์อื่นๆ ที่คุณใส่ใน Model Clothing ที่นี่ เช่น size, color, brand
         }),
-        # ('Timestamps', { # Optional: to show read-only timestamps
-        #     'fields': ('created_at', 'updated_at'),
-        #     'classes': ('collapse',) # ทำให้ซ่อนได้
-        # })
     )
-    readonly_fields = ('created_at', 'updated_at') # ทำให้ฟิลด์นี้เป็น Read-only ในหน้าแก้ไข
+    readonly_fields = ('created_at', 'updated_at')
 
-    def image_preview(self, obj):
-        from django.utils.html import format_html
-        if obj.image:
-            return format_html('<img src="{}" style="max-height: 60px; max-width: 60px; object-fit: cover;" />', obj.image.url)
-        return "No Image"
-    image_preview.short_description = 'รูปภาพสินค้า'
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):

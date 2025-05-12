@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ category.name }} - MindVibe{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Styles for clothing/product grid */
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3.5rem;
+    }
+
+    .product-card {
+        background-color: #FFFFFF;
+        border-radius: 10px;
+        box-shadow: 0 6px 18px rgba(44, 62, 80, 0.1);
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-7px);
+        box-shadow: 0 12px 28px rgba(44, 62, 80, 0.18);
+    }
+
+    .product-card-image-wrapper {
+        width: 100%;
+        height: 320px;
+        overflow: hidden;
+        background-color: #f0f0f0;
+    }
+
+    .product-card-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    .product-card:hover .product-card-image {
+        transform: scale(1.08);
+    }
+
+    .product-card-info {
+        padding: 1.2rem; /* Increased padding slightly */
+        text-align: center;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* To push button to bottom if name is short */
+    }
+
+    .product-card-name {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #2C3E50;
+        line-height: 1.4;
+        margin-bottom: 0.8rem; /* Space between name and button */
+    }
+
+    .product-card-button { /* New style for the "View Detail" button */
+        font-family: 'Kanit', sans-serif;
+        background-color: #A7B8A5; /* Quiet Green, matches login button */
+        color: white;
+        padding: 0.6rem 1rem; /* Adjust padding as needed */
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 400; /* Lighter than main CTA button */
+        font-size: 0.85rem; /* Smaller font size */
+        transition: background-color 0.25s ease, transform 0.15s ease;
+        border: none;
+        display: inline-block; /* Allows it to not take full width */
+        margin-top: auto; /* Pushes button to the bottom if content above varies */
+        align-self: center; /* Center button if it's not full width */
+        cursor: pointer;
+    }
+
+    .product-card-button:hover {
+        background-color: #96A894; /* Darker Quiet Green */
+        transform: translateY(-1px); /* Subtle hover effect */
+    }
+
+    /* Button style from home.html for "Back to Home / Other Categories" */
+    .cta-button-style {
+        font-family: 'Kanit', sans-serif;
+        background-color: #7F8C8D;
+        color: white;
+        padding: 0.8rem 2rem;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: background-color 0.25s ease, transform 0.15s ease;
+        border: none;
+        display: inline-block;
+    }
+    .cta-button-style:hover {
+        background-color: #6c757d;
+        transform: translateY(-2px);
+    }
+    .section-title {
+        text-align: center;
+        color: #2C3E50;
+        margin-top: 1.5rem;
+        margin-bottom: 2.5rem;
+        font-size: 1.9rem;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container" style="padding-top: 1.5rem; padding-bottom: 2rem;">
+    <h1 class="section-title">{{ category.name }}</h1>
+
+    {% if category.description %}
+        <p style="text-align: center; margin-bottom: 2.5rem; color: #555; font-size: 1rem; max-width: 700px; margin-left:auto; margin-right:auto; line-height:1.6;">
+            {{ category.description }}
+        </p>
+    {% endif %}
+
+    {% if clothing_items %}
+        <div class="product-grid">
+            {% for product in clothing_items %}
+            {# The entire card is a link, but we also add a visible button for clarity #}
+            <div class="product-card"> {# Changed <a> to <div>, link will be on the button or image #}
+                <a href="{% url 'clothes:detail' product.pk %}" style="text-decoration: none; color: inherit; display:contents;"> {# Link for image #}
+                    <div class="product-card-image-wrapper">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-card-image">
+                        {% else %}
+                            <img src="{% static 'clothes/images/placeholder_product.png' %}" alt="Placeholder image for {{ product.name }}" class="product-card-image">
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="product-card-info">
+                    <a href="{% url 'clothes:detail' product.pk %}" style="text-decoration: none; color: inherit;"> {# Link for name #}
+                        <h3 class="product-card-name">{{ product.name }}</h3>
+                    </a>
+                    {# "View Detail" button #}
+                    <a href="{% url 'clothes:detail' product.pk %}" class="product-card-button">View Detail</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 3rem 1rem; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <i class="fas fa-tshirt fa-3x" style="color: #d0d0d0; margin-bottom: 1rem;"></i>
+            <p style="font-size: 1.2rem; color: #7F8C8D; margin-top: 1rem;">
+                ขออภัยค่ะ ขณะนี้ยังไม่มีสินค้าในหมวดหมู่ "{{ category.name }}"
+            </p>
+            <p style="color: #A7B8A5; margin-top: 1.5rem; font-size: 1rem;">
+                ลองเลือกดู <a href="{% url 'clothes:home' %}" style="color: #A7B8A5; font-weight:500; text-decoration: underline;">หมวดหมู่อื่นๆ</a> หรือสินค้ามาใหม่นะคะ
+            </p>
+        </div>
+    {% endif %}
+
+    <div style="text-align: center; margin-top: 3.5rem; margin-bottom: 2rem;">
+        <a href="{% url 'clothes:home' %}" class="cta-button-style"> &laquo; กลับไปเลือกหมวดหมู่อื่นๆ</a>
+    </div>
+</div>
+{% endblock %}

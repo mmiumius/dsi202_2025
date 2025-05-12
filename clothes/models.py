@@ -69,24 +69,23 @@ class Category(models.Model):
 
 class Clothing(models.Model):
     category = models.ForeignKey(
-        Category,
-        related_name='clothes',  # ทำให้เราสามารถเรียก category.clothes.all() ได้
-        on_delete=models.SET_NULL,  # หรือ models.PROTECT ถ้าไม่อยากให้ลบ Category ที่มีสินค้าอยู่
-        null=True,  # อนุญาตให้สินค้ายังไม่อยู่ในหมวดหมู่ก็ได้ (แต่ควรจะเลือก)
+        'Category',
+        related_name='clothes',
+        on_delete=models.SET_NULL,
+        null=True,
         blank=True,
         help_text="เลือกหมวดหมู่สำหรับชุดนี้"
     )
     name = models.CharField(max_length=100, help_text="ชื่อชุด")
-    slug = models.SlugField(max_length=120, unique=True, blank=True, help_text="ส่วนที่แสดงใน URL (จะสร้างจากชื่ออัตโนมัติถ้าเว้นว่าง)")
-    description = models.TextField(help_text="รายละเอียดชุด, เนื้อผ้า, ขนาด, คำแนะนำในการเช่า (ถ้ามี)")
+    slug = models.SlugField(max_length=120, unique=True, blank=True, help_text="URL (สร้างจากชื่ออัตโนมัติ)")
+    description = models.TextField(help_text="รายละเอียดชุด, เนื้อผ้า, คำแนะนำในการเช่า (ถ้ามี)")
     image = models.ImageField(upload_to='clothing_images/', help_text="รูปภาพหลักของชุด")
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        null=True,  # ตั้งเป็น True ชั่วคราวเพื่อให้ Migrate ข้อมูลเก่าได้ง่าย
-        blank=True,  # ตั้งเป็น True ชั่วคราว
-        help_text="ราคาเช่าต่อครั้ง/ต่อวัน (บาท)"
-    )
+
+    # ✅ ราคาเช่า 3, 5, 7 วัน
+    price_3_days = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="ราคาเช่า 3 วัน (บาท)")
+    price_5_days = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="ราคาเช่า 5 วัน (บาท)")
+    price_7_days = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="ราคาเช่า 7 วัน (บาท)")
+
     available_for_rent = models.BooleanField(default=True, help_text="ชุดนี้พร้อมให้เช่าหรือไม่?")
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
@@ -94,7 +93,7 @@ class Clothing(models.Model):
     class Meta:
         verbose_name = "สินค้าเสื้อผ้า"
         verbose_name_plural = "สินค้าเสื้อผ้า"
-        ordering = ['-created_at', 'name']  # เรียงตามวันที่สร้างล่าสุดก่อน แล้วตามชื่อ
+        ordering = ['-created_at', 'name']
 
     def __str__(self):
         return self.name
@@ -103,32 +102,20 @@ class Clothing(models.Model):
         try:
             return reverse('clothes:detail', kwargs={'pk': self.pk})
         except Exception as e:
-            print(f"Warning in Clothing.get_absolute_url: Could not reverse URL for clothing with pk '{self.pk}'. URL 'clothes:detail' might be missing or incorrect. Error: {e}")
+            print(f"Warning in Clothing.get_absolute_url: {e}")
             return "#"
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
             original_slug = self.slug
-
-            # Check for uniqueness in Category
-            if self.__class__ == Category:
-                queryset = Category.objects.filter(slug=self.slug)
-            else:
-                queryset = Clothing.objects.filter(slug=self.slug)
-            
-            # If there's a conflict, append a counter
+            queryset = Clothing.objects.filter(slug=self.slug)
             counter = 1
             while queryset.exists():
                 self.slug = f"{original_slug}-{counter}"
-                if self.__class__ == Category:
-                    queryset = Category.objects.filter(slug=self.slug)
-                else:
-                    queryset = Clothing.objects.filter(slug=self.slug)
+                queryset = Clothing.objects.filter(slug=self.slug)
                 counter += 1
-
         super().save(*args, **kwargs)
-
 
 
 class HeroBanner(models.Model):

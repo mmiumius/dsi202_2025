@@ -159,6 +159,9 @@ def popular_rentals_view(request):
     return render(request, 'clothes/product_list.html', context)
 # --- END PLACEHOLDER VIEWS ---
 
+def home_view(request):
+    return render(request, 'home.html')
+
 
 # --- START CART VIEWS (ถ้าคุณจะเปิดใช้งาน) ---
 # from .models import Cart, CartItem # ตรวจสอบว่า import ถูกต้อง

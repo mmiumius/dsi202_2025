@@ -1,0 +1,277 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th"> {# เปลี่ยนเป็น lang="th" ถ้าเนื้อหาส่วนใหญ่เป็นภาษาไทย #}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}MindVibe - Trendy Fashion Rentals{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* >>> ส่วน CSS จาก home.html ของคุณ สามารถย้ายมาใส่ที่นี่ได้ <<< */
+        /* (ยกเว้น CSS ที่เฉพาะเจาะจงกับ Hero Section หรือ Image Showcase ถ้าคุณไม่ต้องการให้มันโหลดทุกหน้า) */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #FAF7F5;
+            color: #4A4A4A;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-top: 70px; /* For fixed navbar */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .main-content {
+            flex-grow: 1;
+        }
+
+        /* Navbar Styles (จาก home.html) */
+        .navbar {
+            background-color: #FFFFFF;
+            height: 70px;
+            padding: 0 2.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-logo a {
+            font-size: 2rem;
+            font-weight: 500;
+            color: #2C3E50;
+            text-decoration: none;
+            margin-right: 2.5rem;
+        }
+
+        .navbar-categories a {
+            color: #555;
+            text-decoration: none;
+            margin-right: 1.5rem;
+            font-weight: 400;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+            padding: 0.5rem 0; /* Add some padding for better click area */
+        }
+        .navbar-categories a:hover {
+            color: #A7B8A5;
+        }
+        .navbar-categories a.active { /* Style for active link */
+            color: #2C3E50;
+            font-weight: 500;
+            border-bottom: 2px solid #A7B8A5;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-icons a, .navbar-auth > a, .navbar-auth > span {
+            color: #2C3E50;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-size: 1.1rem;
+            transition: color 0.2s ease;
+        }
+        .navbar-icons a:hover, .navbar-auth > a:hover:not(.btn-login):not(.btn-signup):not(.btn-logout) {
+            color: #A7B8A5;
+        }
+        .navbar-icons a i {
+            font-size: 1.2rem;
+        }
+        .navbar-auth .user-greeting {
+             margin-right: 0.5rem;
+             margin-left: 1.5rem;
+             color: #4A4A4A;
+             font-size: 0.9rem;
+             font-weight: 400;
+        }
+
+        .navbar-auth .btn-login,
+        .navbar-auth .btn-signup,
+        .navbar-auth .btn-logout {
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.25s ease, transform 0.15s ease;
+            border: none;
+            font-size: 0.9rem;
+        }
+        .navbar-auth .btn-login:hover,
+        .navbar-auth .btn-signup:hover,
+        .navbar-auth .btn-logout:hover {
+            transform: translateY(-2px);
+        }
+        .navbar-auth .btn-login { background-color: #A7B8A5; }
+        .navbar-auth .btn-login:hover { background-color: #96A894; }
+        .navbar-auth .btn-signup { background-color: #2C3E50; margin-left: 0.8rem; }
+        .navbar-auth .btn-signup:hover { background-color: #1e2a38; }
+        .navbar-auth .btn-logout { background-color: #7F8C8D; }
+        .navbar-auth .btn-logout:hover { background-color: #6c757d; }
+
+        /* Page Container (จาก home.html) */
+        .page-container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem; /* Default padding, can be overridden by specific pages */
+        }
+
+        /* Footer Styles (จาก home.html) */
+        .footer {
+            background-color: #FFFFFF;
+            color: #4A4A4A;
+            padding: 3.5rem 2rem;
+            margin-top: auto; /* Pushes footer to bottom */
+            border-top: 1px solid #E0E0E0;
+        }
+        .footer-content { /* This class was on a div inside footer in home.html, now applied to a child of .page-container if used */
+            max-width: 1200px; /* Match page-container or be independent */
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2.5rem;
+            text-align: left;
+        }
+        .footer-section h4 {
+            font-size: 1.1rem;
+            color: #2C3E50;
+            margin-bottom: 1.2rem;
+            font-weight: 500;
+        }
+        .footer-section ul { list-style: none; padding: 0; margin: 0; }
+        .footer-section ul li { margin-bottom: 0.7rem; }
+        .footer-section p {
+            font-size: 0.9rem; /* For paragraph text in footer sections */
+            line-height: 1.6;
+            color: #7F8C8D;
+        }
+        .footer-section a {
+            color: #7F8C8D;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+        .footer-section a:hover { color: #A7B8A5; }
+        .footer-section .social-icons a { font-size: 1.3rem; margin-right: 1rem; }
+        .footer-section .social-icons a:last-child { margin-right: 0; }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #EAEAEA;
+            font-size: 0.85rem;
+            color: #7F8C8D;
+        }
+        .footer-bottom p { margin: 0.3rem 0; }
+    </style>
+    {% block extra_head %}{% endblock %} {# สำหรับใส่ CSS เพิ่มเติมจากหน้าที่ extends #}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <div class="navbar-logo">
+                <a href="{% url 'clothes:home' %}">MindVibe</a>
+            </div>
+            <div class="navbar-categories">
+                {# request.resolver_match.url_name helps to identify the current page's URL name #}
+                <a href="{% url 'clothes:home' %}" class="{% if request.resolver_match.url_name == 'home' or request.resolver_match.view_name == 'clothes:products_by_category' %}active{% endif %}">Shop</a>
+                <a href="{% url 'clothes:new_arrivals' %}" class="{% if request.resolver_match.url_name == 'new_arrivals' %}active{% endif %}">New Arrivals</a>
+                <a href="{% url 'clothes:popular_rentals' %}" class="{% if request.resolver_match.url_name == 'popular_rentals' %}active{% endif %}">Popular Rentals</a>
+                {# สำหรับ Sale, ถ้ายังไม่มีหน้าเฉพาะ อาจจะใส่ # หรือ comment ไว้ก่อน #}
+                <a href="#" aria-disabled="true" style="color: #A7B8A5; cursor: not-allowed; opacity: 0.7;">Sale</a>
+            </div>
+        </div>
+        <div class="navbar-right">
+            <div class="navbar-icons">
+                <a href="#" aria-label="Search"><i class="fas fa-search"></i></a>
+                <a href="#" aria-label="Wishlist"><i class="fas fa-heart"></i></a>
+                {# <a href="{% url 'clothes:view_cart' %}" aria-label="Shopping Bag"><i class="fas fa-shopping-bag"></i></a> #}
+                <a href="#" aria-label="Shopping Bag"><i class="fas fa-shopping-bag"></i></a> {# ถ้ายังไม่มีหน้า cart #}
+            </div>
+            <div class="navbar-auth">
+                {% if user.is_authenticated %}
+                    <span class="user-greeting">สวัสดี, {{ user.username|default:'User' }}</span>
+                    <a href="{% url 'clothes:logout' %}" class="btn-logout">Logout</a>
+                {% else %}
+                    <a href="{% url 'clothes:login' %}" class="btn-login">Login</a>
+                    <a href="{% url 'clothes:signup' %}" class="btn-signup">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {# ไม่ต้องมี .page-container ครอบที่นี่ เพราะจะให้แต่ละหน้าที่ extends มาใส่เอง #}
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content page-container"> {# เพิ่ม page-container เพื่อให้ content สอดคล้องกับ main content #}
+            <div class="footer-section about">
+                <h4>MindVibe Rentals</h4>
+                <p>Your premier destination for multi-brand dress rentals. Find the perfect look for every occasion.</p>
+                <div class="social-icons" style="margin-top:1rem;">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            <div class="footer-section links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{% url 'clothes:home' %}">Shop All Rentals</a></li>
+                    <li><a href="{% url 'clothes:new_arrivals' %}">New Arrivals</a></li>
+                    <li><a href="{% url 'clothes:popular_rentals' %}">Popular Rentals</a></li>
+                    <li><a href="#">Sale Items</a></li> {# Link ไปหน้า Sale (ถ้ามี) #}
+                </ul>
+            </div>
+            <div class="footer-section support">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Rental Process</a></li>
+                    <li><a href="#">Size Guide</a></li>
+                </ul>
+            </div>
+             <div class="footer-section company">
+                <h4>Our Company</h4>
+                <ul>
+                    <li><a href="#">About MindVibe</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; {% now "Y" %} MindVibe Rentals. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    {% block extra_script %}{% endblock %} {# สำหรับใส่ JS เพิ่มเติมจากหน้าที่ extends #}
+</body>
+</html>
