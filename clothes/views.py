@@ -6,6 +6,8 @@ from .models import Clothing, Category, HeroBanner # ตรวจสอบว่
 import random
 from django.contrib import messages
 from django.templatetags.static import static # เพิ่ม import นี้เผื่อใช้ใน image_url fallback
+from django.db.models import Q # <--- *** เพิ่มบรรทัดนี้เข้าไปครับ ***
+
 
 def welcome(request):
     return render(request, 'clothes/welcome.html')
@@ -79,20 +81,26 @@ def logout_view(request):
 
 def products_by_category_view(request, category_slug):
     category = get_object_or_404(Category, slug=category_slug, is_active=True)
-    clothing_items = [] # กำหนดค่าเริ่มต้น
-    try:
-        clothing_items = category.clothes.filter(available_for_rent=True).order_by('-created_at')
-        query = request.GET.get('q', '')
-        if query:
-            clothing_items = clothing_items.filter(name__icontains=query)
-    except Exception as e:
-        print(f"Error in products_by_category_view for category '{category_slug}': {e}")
-        messages.error(request, "เกิดข้อผิดพลาดในการดึงข้อมูลสินค้าสำหรับหมวดหมู่นี้")
+    # clothing_items = category.clothes.filter(available_for_rent=True).order_by('-created_at') # โค้ดเดิมของคุณ
+
+    query = request.GET.get('q', '') # รับค่า query สำหรับ search
+    
+    # เริ่มต้นด้วยการดึงสินค้าทั้งหมดใน category นี้ที่พร้อมให้เช่า
+    base_query = category.clothes.filter(available_for_rent=True)
+
+    if query:
+        # ถ้ามีการค้นหา ให้ filter เพิ่มเติมจากชื่อ และ/หรือ คำอธิบาย
+        clothing_items = base_query.filter(
+            Q(name__icontains=query) | Q(description__icontains=query)
+        ).distinct().order_by('-created_at') # ใช้ distinct ถ้า Q object อาจทำให้เกิด duplicate
+    else:
+        # ถ้าไม่มีการค้นหา ก็แสดงสินค้าทั้งหมดใน category นั้น (เรียงตามวันที่สร้างล่าสุด)
+        clothing_items = base_query.order_by('-created_at')
 
     context = {
         'category': category,
         'clothing_items': clothing_items,
-        'query': query if 'query' in locals() else '', # Ensure query is in context
+        'query': query, # ส่ง query กลับไปให้ template เพื่อแสดงใน search bar
     }
     return render(request, 'clothes/category_products.html', context)
 

@@ -1,22 +1,102 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %} {# ถ้ามีการใช้ intcomma หรือ filter อื่นๆ ในการแสดงราคา #}
 
 {% block title %}{{ category.name }} - MindVibe{% endblock %}
 
 {% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
-    /* Styles for clothing/product grid */
+    body {
+        font-family: 'Kanit', sans-serif;
+        background-color: #FAF7F5;
+        color: #4A4A4A;
+    }
+    .page-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+    @media (min-width: 768px) {
+        .page-container {
+            padding: 2rem;
+        }
+    }
+    .category-header { /* เปลี่ยนจาก section-title ให้เฉพาะเจาะจงขึ้น */
+        text-align: center;
+        margin-bottom: 1.5rem; /* ลดระยะห่างเล็กน้อย */
+    }
+    .category-header h1 {
+        font-size: 2rem; /* ปรับขนาดตามความเหมาะสม */
+        color: #2C3E50;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    .category-header .category-description {
+        font-size: 1rem;
+        color: #555;
+        max-width: 700px;
+        margin: 0 auto 2rem auto; /* เพิ่มระยะห่างด้านล่างคำอธิบาย */
+        line-height: 1.6;
+    }
+
+    /* Search Bar Styles (เหมือนกับ product_list.html) */
+    .search-bar-container {
+        margin-bottom: 2.5rem;
+        display: flex;
+        justify-content: center;
+    }
+    .search-form {
+        display: flex;
+        width: 100%;
+        max-width: 600px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .search-form input[type="text"] {
+        flex-grow: 1;
+        padding: 0.75rem 1rem;
+        border: none;
+        font-size: 1rem;
+        font-family: 'Kanit', sans-serif;
+        outline: none;
+    }
+    .search-form button[type="submit"] {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        background-color: #A7B8A5;
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        font-family: 'Kanit', sans-serif;
+    }
+    .search-form button[type="submit"]:hover {
+        background-color: #96A894;
+    }
+    .search-form button[type="submit"] i {
+        margin-right: 0.3em;
+    }
+    .search-results-info {
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 1rem;
+        color: #555;
+    }
+
+    /* Product Grid & Card Styles (สามารถใช้ CSS เดิมจาก product_list.html หรือปรับใหม่ได้) */
     .product-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 2rem;
         margin-bottom: 3.5rem;
     }
-
     .product-card {
         background-color: #FFFFFF;
         border-radius: 10px;
-        box-shadow: 0 6px 18px rgba(44, 62, 80, 0.1);
+        box-shadow: 0 6px 18px rgba(44, 62, 80, 0.08);
         overflow: hidden;
         text-decoration: none;
         color: inherit;
@@ -24,146 +104,172 @@
         flex-direction: column;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
     .product-card:hover {
-        transform: translateY(-7px);
-        box-shadow: 0 12px 28px rgba(44, 62, 80, 0.18);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(44, 62, 80, 0.15);
     }
-
     .product-card-image-wrapper {
         width: 100%;
-        height: 320px;
+        height: 300px;
         overflow: hidden;
         background-color: #f0f0f0;
     }
-
     .product-card-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.4s ease;
+        transition: transform 0.35s ease;
     }
-
     .product-card:hover .product-card-image {
-        transform: scale(1.08);
+        transform: scale(1.05);
     }
-
     .product-card-info {
-        padding: 1.2rem; /* Increased padding slightly */
+        padding: 1.2rem;
         text-align: center;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
-        justify-content: space-between; /* To push button to bottom if name is short */
+        justify-content: space-between;
     }
-
     .product-card-name {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         font-weight: 500;
         color: #2C3E50;
         line-height: 1.4;
-        margin-bottom: 0.8rem; /* Space between name and button */
+        margin-bottom: 0.7rem;
     }
-
-    .product-card-button { /* New style for the "View Detail" button */
-        font-family: 'Kanit', sans-serif;
-        background-color: #A7B8A5; /* Quiet Green, matches login button */
-        color: white;
-        padding: 0.6rem 1rem; /* Adjust padding as needed */
-        text-decoration: none;
-        border-radius: 6px;
-        font-weight: 400; /* Lighter than main CTA button */
-        font-size: 0.85rem; /* Smaller font size */
-        transition: background-color 0.25s ease, transform 0.15s ease;
-        border: none;
-        display: inline-block; /* Allows it to not take full width */
-        margin-top: auto; /* Pushes button to the bottom if content above varies */
-        align-self: center; /* Center button if it's not full width */
-        cursor: pointer;
-    }
-
-    .product-card-button:hover {
-        background-color: #96A894; /* Darker Quiet Green */
-        transform: translateY(-1px); /* Subtle hover effect */
-    }
-
-    /* Button style from home.html for "Back to Home / Other Categories" */
-    .cta-button-style {
-        font-family: 'Kanit', sans-serif;
-        background-color: #7F8C8D;
-        color: white;
-        padding: 0.8rem 2rem;
-        text-decoration: none;
-        border-radius: 6px;
-        font-weight: 500;
+    .product-card-price {
         font-size: 0.95rem;
+        color: #A7B8A5;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+    .product-card-button {
+        font-family: 'Kanit', sans-serif;
+        background-color: #A7B8A5;
+        color: white;
+        padding: 0.6rem 1.2rem;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 400;
+        font-size: 0.9rem;
         transition: background-color 0.25s ease, transform 0.15s ease;
         border: none;
         display: inline-block;
+        margin-top: auto;
+        align-self: center;
+        cursor: pointer;
     }
-    .cta-button-style:hover {
-        background-color: #6c757d;
-        transform: translateY(-2px);
+    .product-card-button:hover {
+        background-color: #96A894;
+        transform: translateY(-1px);
     }
-    .section-title {
+
+    .no-items-message { /* สไตล์สำหรับ "ไม่พบสินค้า" */
         text-align: center;
-        color: #2C3E50;
-        margin-top: 1.5rem;
-        margin-bottom: 2.5rem;
-        font-size: 1.9rem;
-        font-weight: 500;
+        padding: 3rem 1rem;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
+    .no-items-message i {
+        font-size: 3rem;
+        color: #d0d0d0;
+        margin-bottom: 1rem;
+        display: block;
+    }
+    .no-items-message p {
+        font-size: 1.2rem;
+        color: #7F8C8D;
+    }
+    .back-to-categories-link { /* ปุ่มกลับไปหน้าหมวดหมู่ */
+        display: inline-block;
+        margin-top: 2rem;
+        padding: 0.8rem 1.5rem;
+        background-color: #7F8C8D;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+    }
+    .back-to-categories-link:hover {
+        background-color: #6c757d;
+    }
+
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="page-container" style="padding-top: 1.5rem; padding-bottom: 2rem;">
-    <h1 class="section-title">{{ category.name }}</h1>
+<div class="page-container">
+    <div class="category-header">
+        <h1>{{ category.name }}</h1>
+        {% if category.description %}
+            <p class="category-description">{{ category.description|linebreaks }}</p>
+        {% endif %}
+    </div>
 
-    {% if category.description %}
-        <p style="text-align: center; margin-bottom: 2.5rem; color: #555; font-size: 1rem; max-width: 700px; margin-left:auto; margin-right:auto; line-height:1.6;">
-            {{ category.description }}
-        </p>
+    {# --- เพิ่ม Search Bar ตรงนี้ --- #}
+    <div class="search-bar-container">
+        <form method="GET" action="{% url 'clothes:products_by_category' category_slug=category.slug %}" class="search-form">
+            {# action จะ submit ไปยัง URL ของ category ปัจจุบัน พร้อมกับ query parameter q #}
+            <input type="text" name="q" placeholder="ค้นหาในหมวดหมู่ {{ category.name }}..." value="{{ query|default:'' }}">
+            <button type="submit"><i class="fas fa-search"></i> ค้นหา</button>
+        </form>
+    </div>
+
+    {# แสดงข้อความผลการค้นหา ถ้ามีการค้นหา #}
+    {% if query %}
+        <div class="search-results-info">
+            {% if clothing_items %}
+                <p>ผลการค้นหาสำหรับ: "<strong>{{ query }}</strong>" ในหมวดหมู่ "{{category.name}}" (พบ {{ clothing_items|length }} รายการ)</p>
+            {% else %}
+                <p>ไม่พบผลการค้นหาสำหรับ: "<strong>{{ query }}</strong>" ในหมวดหมู่ "{{category.name}}"</p>
+            {% endif %}
+        </div>
     {% endif %}
 
     {% if clothing_items %}
         <div class="product-grid">
-            {% for product in clothing_items %}
-            {# The entire card is a link, but we also add a visible button for clarity #}
-            <div class="product-card"> {# Changed <a> to <div>, link will be on the button or image #}
-                <a href="{% url 'clothes:detail' product.pk %}" style="text-decoration: none; color: inherit; display:contents;"> {# Link for image #}
+            {% for product_item in clothing_items %}
+            <div class="product-card">
+                <a href="{% url 'clothes:detail' product_item.pk %}" style="text-decoration: none; color: inherit; display:contents;">
                     <div class="product-card-image-wrapper">
-                        {% if product.image %}
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-card-image">
+                        {% if product_item.image %}
+                            <img src="{{ product_item.image.url }}" alt="{{ product_item.name }}" class="product-card-image">
                         {% else %}
-                            <img src="{% static 'clothes/images/placeholder_product.png' %}" alt="Placeholder image for {{ product.name }}" class="product-card-image">
+                            <img src="{% static 'clothes/images/placeholder_product.png' %}" alt="Placeholder for {{ product_item.name }}" class="product-card-image">
                         {% endif %}
                     </div>
                 </a>
                 <div class="product-card-info">
-                    <a href="{% url 'clothes:detail' product.pk %}" style="text-decoration: none; color: inherit;"> {# Link for name #}
-                        <h3 class="product-card-name">{{ product.name }}</h3>
-                    </a>
-                    {# "View Detail" button #}
-                    <a href="{% url 'clothes:detail' product.pk %}" class="product-card-button">View Detail</a>
+                    <div>
+                        <a href="{% url 'clothes:detail' product_item.pk %}" style="text-decoration: none; color: inherit;">
+                            <h3 class="product-card-name">{{ product_item.name }}</h3>
+                        </a>
+                    </div>
+                    <a href="{% url 'clothes:detail' product_item.pk %}" class="product-card-button">ดูรายละเอียด</a>
                 </div>
             </div>
             {% endfor %}
         </div>
     {% else %}
-        <div style="text-align: center; padding: 3rem 1rem; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-            <i class="fas fa-tshirt fa-3x" style="color: #d0d0d0; margin-bottom: 1rem;"></i>
-            <p style="font-size: 1.2rem; color: #7F8C8D; margin-top: 1rem;">
-                ขออภัยค่ะ ขณะนี้ยังไม่มีสินค้าในหมวดหมู่ "{{ category.name }}"
-            </p>
-            <p style="color: #A7B8A5; margin-top: 1.5rem; font-size: 1rem;">
-                ลองเลือกดู <a href="{% url 'clothes:home' %}" style="color: #A7B8A5; font-weight:500; text-decoration: underline;">หมวดหมู่อื่นๆ</a> หรือสินค้ามาใหม่นะคะ
-            </p>
-        </div>
+        {# ถ้าไม่มี clothing_items เลย (ทั้งจากการค้นหา หรือ category นี้ไม่มีสินค้า) #}
+        {% if not query %} {# แสดงข้อความนี้ถ้าไม่ได้ค้นหาแต่ไม่มีของ #}
+            <div class="no-items-message">
+                <i class="fas fa-tshirt"></i>
+                <p>ขออภัยค่ะ ขณะนี้ยังไม่มีสินค้าในหมวดหมู่ "{{ category.name }}"</p>
+            </div>
+        {% endif %} {# สิ้นสุด if not query (ถ้าเป็นการค้นหาแล้วไม่เจอ จะมีข้อความ search-results-info แสดงแล้ว) #}
     {% endif %}
 
-    <div style="text-align: center; margin-top: 3.5rem; margin-bottom: 2rem;">
-        <a href="{% url 'clothes:home' %}" class="cta-button-style"> &laquo; กลับไปเลือกหมวดหมู่อื่นๆ</a>
+    <div style="text-align: center; margin-top: 2.5rem;">
+        <a href="{% url 'clothes:home' %}" class="back-to-categories-link"> &laquo; กลับไปเลือกหมวดหมู่อื่นๆ</a>
     </div>
+
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+{# JavaScript ถ้าจำเป็นสำหรับหน้านี้ #}
 {% endblock %}
