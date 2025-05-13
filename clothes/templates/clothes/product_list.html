@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}   {# <--- เพิ่มบรรทัดนี้เข้าไป #}
+
 
 {# กำหนด title ของหน้าตาม page_title ที่ส่งมาจาก view #}
 {% block title %}{{ page_title|default:"สินค้า" }} - MindVibe{% endblock %}

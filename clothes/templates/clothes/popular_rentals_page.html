@@ -1,0 +1,206 @@
+{# ใน clothes/templates/clothes/popular_rentals_page.html #}
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title|default:"ชุดเช่ายอดนิยม" }} - MindVibe{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    body {
+        font-family: 'Kanit', sans-serif;
+        background-color: #f0f2f5; /* ลองเปลี่ยนสีพื้นหลัง */
+        color: #333;
+    }
+    .popular-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+    .popular-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    .popular-header h1 {
+        font-size: 2.5rem; /* ใหญ่ขึ้น */
+        color: #A7B8A5; /* ใช้สีเขียวเป็นหลัก */
+        font-weight: 700; /* หนาขึ้น */
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .popular-header p {
+        font-size: 1.1rem;
+        color: #666;
+        max-width: 600px;
+        margin: 0.5rem auto 0;
+    }
+
+    /* ดีไซน์ Product Card ใหม่สำหรับ Popular Items */
+    .popular-product-grid {
+        display: grid;
+        /* ตัวอย่าง: แสดง 2 คอลัมน์ใหญ่ๆ หรือปรับตามจำนวนสินค้าที่ต้องการเน้น */
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2.5rem;
+    }
+    @media (min-width: 992px) {
+        .popular-product-grid {
+            /* อาจจะอยากให้มี 3-4 คอลัมน์บนจอใหญ่มากๆ */
+            /* grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); */
+        }
+    }
+
+    .popular-product-card {
+        background-color: #fff;
+        border-radius: 12px; /* โค้งมนมากขึ้น */
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); /*เงาชัดขึ้น */
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1); /* transition สวยๆ */
+        text-decoration: none;
+        color: inherit;
+    }
+    .popular-product-card:hover {
+        transform: translateY(-10px) scale(1.02); /* เอฟเฟกต์ตอน hover */
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+    .popular-card-image-wrapper {
+        height: 350px; /* รูปใหญ่ขึ้น */
+        position: relative;
+        overflow: hidden;
+    }
+    .popular-card-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    .popular-product-card:hover .popular-card-image {
+        transform: scale(1.1); /* ซูมรูปตอน hover */
+    }
+    .popular-badge { /* ป้าย "Popular" หรือ "Hot" */
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background-color: #e74c3c; /* สีแดงสด */
+        color: white;
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        border-radius: 4px;
+        z-index: 10;
+    }
+    .popular-card-info {
+        padding: 1.5rem;
+        text-align: left; /* ลองจัดชิดซ้าย */
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .popular-card-name {
+        font-size: 1.2rem; /* ชื่อใหญ่ขึ้น */
+        font-weight: 600; /* หนาขึ้น */
+        color: #2C3E50;
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+    }
+    .popular-card-price {
+        font-size: 1rem;
+        color: #A7B8A5;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    .popular-card-description-short { /* เพิ่มส่วนคำอธิบายสั้นๆ (ถ้ามี) */
+        font-size: 0.85rem;
+        color: #777;
+        margin-bottom: 1.2rem;
+        line-height: 1.5;
+        /* อาจจะจำกัดความสูงให้แสดงแค่ 2-3 บรรทัด */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* Show 2 lines */
+        -webkit-box-orient: vertical;
+    }
+    .popular-card-button {
+        font-family: 'Kanit', sans-serif;
+        background-color: #2C3E50; /* สีเข้ม */
+        color: white;
+        padding: 0.7rem 1.5rem;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 500; /* หนาขึ้น */
+        font-size: 0.9rem;
+        transition: background-color 0.25s ease;
+        border: none;
+        display: inline-block;
+        margin-top: auto; /* Pushes button to the bottom */
+        align-self: flex-start; /* จัดปุ่มชิดซ้าย */
+    }
+    .popular-card-button:hover {
+        background-color: #1a2530; /* เข้มขึ้นอีก */
+    }
+
+    .no-items-message { /* สไตล์เดิม */ }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="popular-container">
+    <div class="popular-header">
+        <h1>{{ page_title|default:"ชุดเช่ายอดนิยม" }}</h1>
+        <p>ชุดที่ถูกถามถึงและเช่าบ่อยที่สุด คัดมาให้คุณแล้ว!</p>
+    </div>
+
+    {% if popular_items %} {# ใช้ชื่อ key จาก context ที่ส่งมาจาก view #}
+        <div class="popular-product-grid">
+            {% for product_item in popular_items %}
+            <a href="{% url 'clothes:detail' product_item.pk %}" class="popular-product-card"> {# ทำให้ card ทั้งใบเป็น link #}
+                <div class="popular-card-image-wrapper">
+                    {% if product_item.image %}
+                        <img src="{{ product_item.image.url }}" alt="{{ product_item.name }}" class="popular-card-image">
+                    {% else %}
+                        <img src="{% static 'clothes/images/placeholder_product.png' %}" alt="Placeholder" class="popular-card-image">
+                    {% endif %}
+                    <span class="popular-badge"><i class="fas fa-fire"></i> ยอดนิยม</span> {# เพิ่มป้าย "ยอดนิยม" #}
+                </div>
+                <div class="popular-card-info">
+                    <div>
+                        <h3 class="popular-card-name">{{ product_item.name }}</h3>
+                        {# แสดงราคาเริ่มต้น ถ้ามี #}
+                        {% if product_item.price_3_days %}
+                            <p class="popular-card-price">เริ่มต้น {{ product_item.price_3_days|floatformat:0|intcomma }} บาท/3วัน</p>
+                        {% elif product_item.price_5_days %}
+                            <p class="popular-card-price">เริ่มต้น {{ product_item.price_5_days|floatformat:0|intcomma }} บาท/5วัน</p>
+                        {% elif product_item.price_7_days %}
+                             <p class="popular-card-price">เริ่มต้น {{ product_item.price_7_days|floatformat:0|intcomma }} บาท/7วัน</p>
+                        {% else %}
+                             <p class="popular-card-price">สอบถามราคา</p>
+                        {% endif %}
+                        {# เพิ่มคำอธิบายสั้นๆ (ถ้ามีข้อมูลใน description) #}
+                        <p class="popular-card-description-short">
+                            {{ product_item.description|truncatewords:15|default:"ชุดสวย คุณภาพดี พร้อมให้คุณโดดเด่นในทุกโอกาส" }}
+                        </p>
+                    </div>
+                    <span class="popular-card-button">ดูรายละเอียดและเช่า</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-items-message" style="background-color:transparent; box-shadow:none;"> {# ปรับสไตล์ no items message #}
+            <i class="fas fa-sad-tear" style="font-size: 3rem; color: #A7B8A5;"></i>
+            <p style="color:#555;">ขออภัยค่ะ ขณะนี้ยังไม่มีข้อมูลชุดเช่ายอดนิยม</p>
+            <p style="margin-top: 1.5rem; font-size: 1rem;">
+                <a href="{% url 'clothes:home' %}" style="color: #A7B8A5; font-weight:500; text-decoration: underline;">กลับไปหน้าแรก</a>
+            </p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{# JavaScript ถ้าจำเป็นสำหรับหน้านี้ #}
+{% endblock %}

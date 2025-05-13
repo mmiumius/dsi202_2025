@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title|default:"สินค้ามาใหม่" }} - MindVibe{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    body {
+        font-family: 'Kanit', sans-serif;
+        background-color: #FAF7F5;
+    }
+
+    .new-arrivals-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+
+    .new-arrivals-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .new-arrivals-header h1 {
+        font-size: 2.3rem;
+        color: #2C3E50;
+        font-weight: 600;
+    }
+
+    .new-arrivals-header p {
+        font-size: 1.1rem;
+        color: #7F8C8D;
+        margin-top: 0.5rem;
+    }
+
+    .new-arrivals-banner {
+        background-color: #E6EBE0;
+        color: #2C3E50;
+        padding: 2.5rem 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .new-arrivals-banner h2 {
+        font-size: 1.8rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .new-arrivals-banner p {
+        font-size: 1rem;
+        color: #5A5A5A;
+    }
+
+    .new-product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 2rem;
+    }
+
+    .new-product-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        transition: transform 0.2s ease;
+        overflow: hidden;
+    }
+
+    .new-product-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .new-product-card-image-wrapper {
+        height: 320px;
+        overflow: hidden;
+    }
+
+    .new-product-card-image-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .product-card-info {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .product-card-name {
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+
+    .product-card-price {
+        font-size: 1rem;
+        color: #888;
+        margin-bottom: 0.75rem;
+    }
+
+    .product-card-button {
+        display: inline-block;
+        margin-top: 0.5rem;
+        padding: 0.5rem 1.25rem;
+        border-radius: 25px;
+        background-color: #2C3E50;
+        color: white;
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+    }
+
+    .product-card-button:hover {
+        background-color: #1A242F;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="new-arrivals-container">
+    <div class="new-arrivals-header">
+        <h1>{{ page_title|default:"สินค้ามาใหม่ล่าสุด" }}</h1>
+        <p>พบกับคอลเลกชันใหม่ที่พร้อมให้คุณเช่าได้แล้ววันนี้</p>
+    </div>
+
+    <div class="new-arrivals-banner">
+        <h2>คอลเลกชันใหม่ล่าสุด พร้อมให้คุณเลือก</h2>
+        <p>เสื้อผ้าแฟชั่นคุณภาพดี ดีไซน์ใหม่ทุกสัปดาห์</p>
+    </div>
+
+    {% if new_arrival_items %}
+        <div class="new-product-grid">
+            {% for product_item in new_arrival_items %}
+            <div class="new-product-card">
+                <a href="{% url 'clothes:detail' product_item.pk %}" style="text-decoration: none; color: inherit;">
+                    <div class="new-product-card-image-wrapper">
+                        {% if product_item.image %}
+                            <img src="{{ product_item.image.url }}" alt="{{ product_item.name }}">
+                        {% else %}
+                            <img src="{% static 'clothes/images/placeholder_product.png' %}" alt="No image available">
+                        {% endif %}
+                    </div>
+                    <div class="product-card-info">
+                        <h3 class="product-card-name">{{ product_item.name }}</h3>
+                        {% if product_item.price_3_days %}
+                            <p class="product-card-price">เช่า 3 วัน: {{ product_item.price_3_days|floatformat:0|intcomma }} บาท</p>
+                        {% endif %}
+                        <span class="product-card-button">ดูรายละเอียด</span>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 3rem;">
+            <p style="font-size: 1.2rem;">ขออภัยค่ะ ขณะนี้ยังไม่มีสินค้ามาใหม่</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{# JavaScript เพิ่มเติมถ้ามี #}
+{% endblock %}
