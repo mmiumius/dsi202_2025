@@ -238,15 +238,30 @@ MindVibe สร้างขึ้นบน Django Framework ซึ่งเป�
 
 ## 🗺️ ผังโครงสร้างโปรเจกต์
 
+---
+
 ```text
-dsi202_2025/ # หรือชื่อ Repository ที่ถูกต้อง
+dsi202_2025/
+├── .git/
 ├── config/
+│   ├── __init__.py
+│   ├── asgi.py
 │   ├── settings.py
-│   └── urls.py
+│   ├── urls.py
+│   └── wsgi.py
 ├── clothes/
+│   ├── __init__.py
 │   ├── admin.py
 │   ├── apps.py
 │   ├── migrations/
+│   │   ├── 0001_initial.py
+│   │   ├── 0002_cart_cartitem.py
+│   │   ├── 0003_category.py
+│   │   ├── 0004_herobanner.py
+│   │   ├── 0005_herobanner_banner_type_herobanner_video_and_more.py
+│   │   ├── 0006_alter_category_options_alter_clothing_options_and_more.py
+│   │   ├── 0007_remove_clothing_price_clothing_price_3_days_and_more.py
+│   │   └── __init__.py
 │   ├── models.py
 │   ├── templates/
 │   │   ├── base.html
@@ -254,14 +269,31 @@ dsi202_2025/ # หรือชื่อ Repository ที่ถูกต้อ�
 │   │       ├── cart.html
 │   │       ├── category_products.html
 │   │       ├── checkout.html
-│   │       # ... (ไฟล์ template อื่นๆ) ...
+│   │       ├── detail.html
+│   │       ├── home.html
+│   │       ├── login.html
+│   │       ├── new_arrivals_page.html
+│   │       ├── order_thank_you.html
+│   │       ├── popular_rentals_page.html
+│   │       ├── product_list.html
+│   │       ├── signup.html
+│   │       └── welcome.html
+│   ├── tests.py
 │   ├── urls.py
 │   └── views.py
 ├── media/
 ├── static/
-│   └── clothes/images/
-├── templates/ # (ถ้ามี template ระดับ project)
+│   └── clothes/
+│       └── images/
+│           ├── cv.jpg
+│           ├── placeholder_product.png
+│           ├── style_inspiration_1.jpg
+│           ├── style_inspiration_2.jpg
+│           └── style_inspiration_3.jpg
+├── templates/
+├── .gitignore
+├── admin.txt
+├── docker-compose.yml
 ├── manage.py
 ├── requirements.txt
-├── docker-compose.yml
 └── README.md
