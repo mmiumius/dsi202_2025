@@ -2,7 +2,11 @@
 
 ---
 
+<<<<<<< HEAD
 ## 📜 บทคัดย่อ (Abstract)
+=======
+## 📜 บทคัดย่อ
+>>>>>>> 01b0bb04b59fd8b8b755d1aff212ded5e6a2e2de
 
 ในปัจจุบัน วงการแฟชั่นมีการเปลี่ยนแปลงอย่างรวดเร็ว ส่งผลให้ผู้บริโภคจำนวนมากเผชิญกับความท้าทายในการเข้าถึงเสื้อผ้าที่หลากหลายสำหรับโอกาสพิเศษต่างๆ โดยเฉพาะอย่างยิ่งเมื่อชุดเหล่านั้นมีราคาสูงและอาจถูกใช้งานเพียงไม่กี่ครั้ง ปัญหาดังกล่าวไม่เพียงแต่สร้างภาระค่าใช้จ่ายที่ไม่จำเป็นแก่ผู้บริโภค แต่ยังก่อให้เกิดปัญหาขยะจากเสื้อผ้าที่ล้นเกิน (Fashion Waste) ซึ่งส่งผลกระทบต่อสิ่งแวดล้อมในระยะยาว **MindVibe** จึงถูกพัฒนาขึ้นเพื่อเป็นแพลตฟอร์มบริการเช่าชุดแฟชั่นออนไลน์ที่มุ่งแก้ไขปัญหาเหล่านี้อย่างเป็นรูปธรรม โดยนำเสนอทางเลือกที่ชาญฉลาดและยั่งยืนสำหรับผู้ที่รักการแต่งตัวและใส่ใจต่อสังคม
 
@@ -236,6 +240,7 @@ MindVibe สร้างขึ้นบน Django Framework ซึ่งเป�
 
 ---
 
+<<<<<<< HEAD
 ## 🗺️ ผังโครงสร้างโปรเจกต์
 
 ```text
@@ -247,6 +252,40 @@ dsi202_2025/ # หรือชื่อ Repository ที่ถูกต้อ�
 │   ├── admin.py
 │   ├── apps.py
 │   ├── migrations/
+=======
+## 🎬 วิดีโอนำเสนอระบบ
+
+https://youtu.be/7G63REWnyvY
+
+---
+
+## 🗺️ ผังโครงสร้างโปรเจกต์
+
+---
+
+```text
+dsi202_2025/
+├── .git/
+├── config/
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── clothes/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── migrations/
+│   │   ├── 0001_initial.py
+│   │   ├── 0002_cart_cartitem.py
+│   │   ├── 0003_category.py
+│   │   ├── 0004_herobanner.py
+│   │   ├── 0005_herobanner_banner_type_herobanner_video_and_more.py
+│   │   ├── 0006_alter_category_options_alter_clothing_options_and_more.py
+│   │   ├── 0007_remove_clothing_price_clothing_price_3_days_and_more.py
+│   │   └── __init__.py
+>>>>>>> 01b0bb04b59fd8b8b755d1aff212ded5e6a2e2de
 │   ├── models.py
 │   ├── templates/
 │   │   ├── base.html
@@ -254,14 +293,44 @@ dsi202_2025/ # หรือชื่อ Repository ที่ถูกต้อ�
 │   │       ├── cart.html
 │   │       ├── category_products.html
 │   │       ├── checkout.html
+<<<<<<< HEAD
 │   │       # ... (ไฟล์ template อื่นๆ) ...
+=======
+│   │       ├── detail.html
+│   │       ├── home.html
+│   │       ├── login.html
+│   │       ├── new_arrivals_page.html
+│   │       ├── order_thank_you.html
+│   │       ├── popular_rentals_page.html
+│   │       ├── product_list.html
+│   │       ├── signup.html
+│   │       └── welcome.html
+│   ├── tests.py
+>>>>>>> 01b0bb04b59fd8b8b755d1aff212ded5e6a2e2de
 │   ├── urls.py
 │   └── views.py
 ├── media/
 ├── static/
+<<<<<<< HEAD
 │   └── clothes/images/
 ├── templates/ # (ถ้ามี template ระดับ project)
 ├── manage.py
 ├── requirements.txt
 ├── docker-compose.yml
 └── README.md
+=======
+│   └── clothes/
+│       └── images/
+│           ├── cv.jpg
+│           ├── placeholder_product.png
+│           ├── style_inspiration_1.jpg
+│           ├── style_inspiration_2.jpg
+│           └── style_inspiration_3.jpg
+├── templates/
+├── .gitignore
+├── admin.txt
+├── docker-compose.yml
+├── manage.py
+├── requirements.txt
+└── README.md
+>>>>>>> 01b0bb04b59fd8b8b755d1aff212ded5e6a2e2de
