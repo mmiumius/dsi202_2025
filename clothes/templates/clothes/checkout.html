@@ -7,166 +7,181 @@
 {% block extra_head %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
-    body {
-        font-family: 'Kanit', sans-serif;
-        background-color: #FAF7F5;
-        color: #4A4A4A;
-        line-height: 1.6;
+    body { /* */
+        font-family: 'Kanit', sans-serif; /* */
+        background-color: #FAF7F5; /* */
+        color: #4A4A4A; /* */
+        line-height: 1.6; /* */
     }
-    .checkout-container {
-        max-width: 750px; /* ปรับความกว้างสูงสุดให้เหมาะสมกับ layout คอลัมน์เดียว */
-        margin: 2rem auto;
-        padding: 1rem;
+    .checkout-container { /* */
+        max-width: 750px; /* */
+        margin: 2rem auto; /* */
+        padding: 1rem; /* */
     }
-    @media (min-width: 768px) {
-        .checkout-container {
-            padding: 2rem;
+    @media (min-width: 768px) { /* */
+        .checkout-container { /* */
+            padding: 2rem; /* */
         }
     }
-    .checkout-header {
-        font-size: 1.8rem;
-        color: #2C3E50;
-        margin-bottom: 2rem;
-        font-weight: 500;
-        text-align: center;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 1rem;
+    .checkout-header { /* */
+        font-size: 1.8rem; /* */
+        color: #2C3E50; /* */
+        margin-bottom: 2rem; /* */
+        font-weight: 500; /* */
+        text-align: center; /* */
+        border-bottom: 1px solid #eee; /* */
+        padding-bottom: 1rem; /* */
     }
-    .checkout-section {
-        background-color: #FFFFFF;
-        border-radius: 10px;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
-        padding: 1.5rem;
-        margin-bottom: 2rem;
+    .checkout-section { /* */
+        background-color: #FFFFFF; /* */
+        border-radius: 10px; /* */
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07); /* */
+        padding: 1.5rem; /* */
+        margin-bottom: 2rem; /* */
     }
-    @media (min-width: 768px) {
-        .checkout-section {
-            padding: 2rem;
+    @media (min-width: 768px) { /* */
+        .checkout-section { /* */
+            padding: 2rem; /* */
         }
     }
-    .section-title {
-        font-size: 1.3rem;
-        color: #2C3E50;
-        margin-bottom: 1.5rem;
-        font-weight: 500;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 0.8rem;
+    .section-title { /* */
+        font-size: 1.3rem; /* */
+        color: #2C3E50; /* */
+        margin-bottom: 1.5rem; /* */
+        font-weight: 500; /* */
+        border-bottom: 1px solid #eee; /* */
+        padding-bottom: 0.8rem; /* */
     }
 
     /* Order Summary (Top Section) */
-    .order-summary-top .product-item-summary {
-        display: flex;
-        align-items: flex-start;
-        padding: 0.8rem 0;
-        border-bottom: 1px solid #f0f0f0;
+    .order-summary-top .product-item-summary { /* */
+        display: flex; /* */
+        align-items: flex-start; /* */
+        padding: 0.8rem 0; /* */
+        border-bottom: 1px solid #f0f0f0; /* */
     }
-    .order-summary-top .product-item-summary:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
+    .order-summary-top .product-item-summary:last-child { /* */
+        border-bottom: none; /* */
+        padding-bottom: 0; /* */
     }
-    .order-summary-top .summary-product-image {
-        width: 60px;  /* ขนาดรูปสินค้าในสรุป */
-        height: 75px;
-        object-fit: cover;
-        border-radius: 4px;
-        margin-right: 1rem;
+    .order-summary-top .summary-product-image { /* */
+        width: 60px;  /* */
+        height: 75px; /* */
+        object-fit: cover; /* */
+        border-radius: 4px; /* */
+        margin-right: 1rem; /* */
     }
-    .order-summary-top .summary-product-details {
-        flex-grow: 1;
+    .order-summary-top .summary-product-details { /* */
+        flex-grow: 1; /* */
     }
-    .order-summary-top .summary-product-name {
-        font-weight: 500;
-        font-size: 0.95rem;
-        color: #333;
-        margin-bottom: 0.2rem;
+    .order-summary-top .summary-product-name { /* */
+        font-weight: 500; /* */
+        font-size: 0.95rem; /* */
+        color: #333; /* */
+        margin-bottom: 0.2rem; /* */
     }
-    .order-summary-top .summary-product-options {
-        font-size: 0.85rem;
-        color: #777;
-        margin-bottom: 0.2rem;
+    .order-summary-top .summary-product-options { /* */
+        font-size: 0.85rem; /* */
+        color: #777; /* */
+        margin-bottom: 0.2rem; /* */
     }
-    .order-summary-top .summary-product-price {
-        font-size: 0.95rem;
-        color: #555;
-        text-align: right;
-        white-space: nowrap;
-        padding-left: 0.5rem;
+    .order-summary-top .summary-product-price { /* */
+        font-size: 0.95rem; /* */
+        color: #555; /* */
+        text-align: right; /* */
+        white-space: nowrap; /* */
+        padding-left: 0.5rem; /* */
     }
 
-    .summary-totals-list { list-style: none; padding: 0; margin-top: 1.5rem; }
-    .summary-totals-list li { display: flex; justify-content: space-between; padding: 0.7rem 0; font-size: 1rem; }
-    .summary-totals-list li span:first-child { color: #555; }
-    .summary-totals-list li span:last-child { font-weight: 500; color: #333 }
-    .summary-totals-list li.grand-total {
-        font-weight: bold;
-        font-size: 1.3rem; /* ทำให้ยอดสุทธิเด่นขึ้น */
-        color: #2C3E50;
-        border-top: 2px solid #A7B8A5;
-        margin-top: 1rem;
-        padding-top: 1.2rem;
+    .summary-totals-list { list-style: none; padding: 0; margin-top: 1.5rem; } /* */
+    .summary-totals-list li { display: flex; justify-content: space-between; padding: 0.7rem 0; font-size: 1rem; } /* */
+    .summary-totals-list li span:first-child { color: #555; } /* */
+    .summary-totals-list li span:last-child { font-weight: 500; color: #333 } /* */
+    .summary-totals-list li.grand-total { /* */
+        font-weight: bold; /* */
+        font-size: 1.3rem; /* */
+        color: #2C3E50; /* */
+        border-top: 2px solid #A7B8A5; /* */
+        margin-top: 1rem; /* */
+        padding-top: 1.2rem; /* */
     }
-    .summary-totals-list li.grand-total span:last-child { color: #A7B8A5; }
+    .summary-totals-list li.grand-total span:last-child { color: #A7B8A5; } /* */
 
 
-    .checkout-form .form-group { margin-bottom: 1.5rem; }
-    .checkout-form label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #555; font-size: 0.9rem; }
-    .checkout-form input[type="text"],
-    .checkout-form input[type="email"],
-    .checkout-form input[type="tel"],
-    .checkout-form input[type="url"],
-    .checkout-form input[type="file"],
-    .checkout-form textarea {
-        width: 100%;
-        padding: 0.85rem; /* เพิ่ม padding เล็กน้อย */
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        font-family: 'Kanit', sans-serif;
-        font-size: 0.95rem;
-        box-sizing: border-box;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    .checkout-form .form-group { margin-bottom: 1.5rem; } /* */
+    .checkout-form label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #555; font-size: 0.9rem; } /* */
+    .checkout-form input[type="text"], /* */
+    .checkout-form input[type="email"], /* */
+    .checkout-form input[type="tel"], /* */
+    .checkout-form input[type="url"], /* */
+    .checkout-form input[type="file"], /* */
+    .checkout-form textarea { /* */
+        width: 100%; /* */
+        padding: 0.85rem; /* */
+        border: 1px solid #ccc; /* */
+        border-radius: 6px; /* */
+        font-family: 'Kanit', sans-serif; /* */
+        font-size: 0.95rem; /* */
+        box-sizing: border-box; /* */
+        transition: border-color 0.2s ease, box-shadow 0.2s ease; /* */
     }
-    .checkout-form input:focus, .checkout-form textarea:focus {
-        border-color: #A7B8A5;
-        outline: none;
-        box-shadow: 0 0 0 0.2rem rgba(167, 184, 165, 0.25);
+    .checkout-form input:focus, .checkout-form textarea:focus { /* */
+        border-color: #A7B8A5; /* */
+        outline: none; /* */
+        box-shadow: 0 0 0 0.2rem rgba(167, 184, 165, 0.25); /* */
     }
-    .checkout-form textarea { min-height: 80px; }
+    .checkout-form textarea { min-height: 80px; } /* */
 
-    .payment-method-info { margin-bottom: 1.5rem; }
-    .payment-details {
-        border: 1px solid #A7B8A5;
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-top: 1rem;
-        background-color: #f9f9fa;
+    .payment-method-info { margin-bottom: 1.5rem; } /* */
+    .payment-details { /* */
+        border: 1px solid #A7B8A5; /* */
+        border-radius: 8px; /* */
+        padding: 1.5rem; /* */
+        margin-top: 1rem; /* */
+        background-color: #f9f9fa; /* */
     }
-    .payment-details p { margin-bottom: 0.7rem; font-size: 0.95rem; line-height: 1.6; }
-    .payment-details strong { color: #2C3E50; }
-    .payment-details .account-number { font-size: 1.1rem; font-weight: bold; color: #d35400; }
+    .payment-details p { margin-bottom: 0.7rem; font-size: 0.95rem; line-height: 1.6; } /* */
+    .payment-details strong { color: #2C3E50; } /* */
+    .payment-details .account-number { font-size: 1.1rem; font-weight: bold; color: #d35400; } /* */
 
-    .slip-upload-section .form-text { font-size: 0.85rem; color: #777; margin-top:0.3rem; display:block;}
+    .slip-upload-section .form-text { font-size: 0.85rem; color: #777; margin-top:0.3rem; display:block;} /* */
 
-    .place-order-btn {
-        font-family: 'Kanit', sans-serif;
-        font-size: 1.1rem;
-        font-weight: 500;
-        padding: 0.9rem 2rem;
-        background-color: #A7B8A5;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        display: block;
-        width: 100%;
+    .place-order-btn { /* */
+        font-family: 'Kanit', sans-serif; /* */
+        font-size: 1.1rem; /* */
+        font-weight: 500; /* */
+        padding: 0.9rem 2rem; /* */
+        background-color: #A7B8A5; /* */
+        color: white; /* */
+        border: none; /* */
+        border-radius: 6px; /* */
+        cursor: pointer; /* */
+        display: block; /* */
+        width: 100%; /* */
+        text-align: center; /* */
+        transition: background-color 0.25s ease, transform 0.15s ease; /* */
+        margin-top: 2.5rem; /* */
+    }
+    .place-order-btn:hover { /* */
+        background-color: #96A894; /* */
+        transform: translateY(-2px); /* */
+    }
+    .place-order-btn i { margin-right: 0.5em; } /* */
+
+    .promptpay-qr-section {
         text-align: center;
-        transition: background-color 0.25s ease, transform 0.15s ease;
-        margin-top: 2.5rem; /* เพิ่มระยะห่างด้านบน */
+        margin-top: 1.5rem;
+        padding: 1rem;
+        border: 1px dashed #A7B8A5;
+        border-radius: 8px;
+        background-color: #fdfcfb;
     }
-    .place-order-btn:hover {
-        background-color: #96A894;
-        transform: translateY(-2px);
+    .promptpay-qr-section img {
+        max-width: 250px; /* Adjust as needed */
+        height: auto;
+        margin-top: 0.5rem;
+        border: 1px solid #eee;
     }
-    .place-order-btn i { margin-right: 0.5em; }
 
 </style>
 {% endblock %}
@@ -175,8 +190,7 @@
 <div class="checkout-container">
     <h1 class="checkout-header">ยืนยันการเช่าและข้อมูลการชำระเงิน</h1>
 
-    {# --- Section 1: Order Summary (อยู่บนสุดเสมอ) --- #}
-<div class="checkout-section order-summary-top">
+    <div class="checkout-section order-summary-top">
         <h2 class="section-title">สรุปรายการเช่าของคุณ</h2>
         {% if cart %}
             {% for key, item_data in cart.items %}
@@ -190,35 +204,10 @@
                         </div>
                     </div>
                     <div class="summary-product-price">
-                        {# --- คำนวณและแสดงราคารวมของรายการนี้ --- #}
-                        {% with price_str=item_data.price_per_item|default:"0" %} {# ให้ default เป็น "0" ถ้าไม่มีค่า #}
-                        {% with quantity_val=item_data.quantity|default:1 %} {# ให้ default เป็น 1 ถ้าไม่มีค่า #}
-                            {% comment %}
-                                การคำนวณใน Django template มีข้อจำกัด
-                                เราจะพยายามแปลงเป็น float และคูณ
-                                แต่ถ้าซับซ้อนมาก ควรทำใน view แล้วส่งผลลัพธ์มา
-                            {% endcomment %}
-                            {% firstof "" "" %} {# Trick to enable math operations below, might not always work #}
-                            {% with price_float=price_str|stringformat:"f"|add:0 %}
-                            {% with quantity_int=quantity_val|add:0 %}
-                                {% with line_total_calc=price_float|stringformat:"f"|add:0 quantity_int=quantity_int %}
-                                     {% comment %} The following line is trying to multiply.
-                                         A more robust way is to pre-calculate this in the view.
-                                         For now, if quantity is always 1, price_float is the line total.
-                                         If quantity can be > 1, this approach is problematic.
-                                         Let's assume quantity is usually 1 for rental items per entry
-                                         or that the subtotal calculation in the view is the primary source of truth.
-                                         We will display price_per_item * quantity.
-                                     {% endcomment %}
-
-                                     {% comment %} Converting to numbers and multiplying (Best effort in template) {% endcomment %}
-                                     {% with price_num=item_data.price_per_item|default:0.0 %} {# Ensure it's treated as number #}
-                                     {% with qty_num=item_data.quantity|default:1 %}
-                                         {% widthratio price_num 1 qty_num as item_line_total %} {# price_num * qty_num #}
-                                         {{ item_line_total|floatformat:2 }} THB
-                                     {% endwith %}{% endwith %}
-                                {% endwith %}
-                            {% endwith %}{% endwith %}
+                        {% with price_num=item_data.price_per_item|default:0.0 %}
+                        {% with qty_num=item_data.quantity|default:1 %}
+                            {% widthratio price_num 1 qty_num as item_line_total %}
+                            {{ item_line_total|floatformat:2 }} THB
                         {% endwith %}{% endwith %}
                     </div>
                 </div>
@@ -228,11 +217,11 @@
             <ul class="summary-totals-list">
                 <li>
                     <span>ยอดรวม (Subtotal)</span>
-                    <span>{{ subtotal|default_if_none:"0.00"|floatformat:2|intcomma }} THB</span> {# อันนี้มาจาก View ถูกต้องแล้ว #}
+                    <span>{{ subtotal|default_if_none:"0.00"|floatformat:2|intcomma }} THB</span>
                 </li>
                 <li class="grand-total">
                     <span>ยอดที่ต้องชำระ</span>
-                    <span>{{ subtotal|default_if_none:"0.00"|floatformat:2|intcomma }} THB</span> {# อันนี้มาจาก View ถูกต้องแล้ว #}
+                    <span>{{ subtotal|default_if_none:"0.00"|floatformat:2|intcomma }} THB</span>
                 </li>
             </ul>
         {% else %}
@@ -241,8 +230,7 @@
         {% endif %}
     </div>
 
-    {# --- Section 2: Form for Contact, Payment, Slip (เรียงต่อกันลงมา) --- #}
-    {% if cart %} {# แสดงฟอร์มนี้ต่อเมื่อมีสินค้าในตะกร้าเท่านั้น #}
+    {% if cart %}
     <form id="checkoutForm" method="POST" action="{% url 'clothes:place_order' %}" enctype="multipart/form-data">
         {% csrf_token %}
 
@@ -274,11 +262,20 @@
                 <input type="hidden" name="payment_method" value="bank_transfer">
                 <div id="bankTransferDetails" class="payment-details">
                     <p style="font-size: 1rem; font-weight:500; margin-bottom:1rem;">
-                        <i class="fas fa-university fa-fw" style="margin-right: 0.5em;"></i> โอนเงินผ่านบัญชีธนาคาร
+                        <i class="fas fa-university fa-fw" style="margin-right: 0.5em;"></i> โอนเงินผ่านบัญชีธนาคาร หรือ สแกน QR Code ด้านล่าง
                     </p>
                     <p><strong>ธนาคาร:</strong> <span style="color:#3498db;">ธนาคารกสิกรไทย</span></p>
                     <p><strong>เลขที่บัญชี:</strong> <span class="account-number">1061272484</span></p>
                     <p><strong>ชื่อบัญชี:</strong> <span style="color:#3498db;">นางสาวญาณิศา มหัพพล</span></p>
+
+                    {% if qr_image_base64 %}
+                    <div class="promptpay-qr-section">
+                        <p><strong>หรือสแกน PromptPay QR Code เพื่อชำระเงิน ({{ subtotal|floatformat:2|intcomma }} THB)</strong></p>
+                        <img src="data:image/png;base64,{{ qr_image_base64 }}" alt="PromptPay QR Code">
+                        <p style="font-size:0.85rem; color:#555;">บัญชี: {{ promptpay_account }}</p>
+                    </div>
+                    {% endif %}
+
                     <hr style="margin: 1rem 0;">
                     <p style="font-size:1rem; color:#333;">ยอดที่ต้องชำระทั้งหมด: <strong style="font-size:1.1rem; color:#A7B8A5;">{{ subtotal|floatformat:2|intcomma }} THB</strong></p>
                     <p style="margin-top:1rem; font-size:0.9rem; color:#555;">หลังจากโอนเงินแล้ว กรุณาแนบหลักฐานการโอนด้านล่างนี้</p>
@@ -310,38 +307,38 @@
             <i class="fas fa-check-circle"></i> ยืนยันการเช่าและแจ้งชำระเงิน
         </button>
     </form>
-    {% endif %} {# End of if request.session.cart #}
+    {% endif %}
 </div>
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("Checkout page script loaded. Only bank transfer. Layout: No columns for form fields.");
+document.addEventListener('DOMContentLoaded', function() { /* */
+    console.log("Checkout page script loaded. Only bank transfer. Layout: No columns for form fields."); /* */
 
-    const checkoutForm = document.getElementById('checkoutForm');
-    if(checkoutForm){
-        checkoutForm.addEventListener('submit', function(event){
-            const slipImageInput = document.getElementById('id_slip_image');
-            const slipLinkInput = document.getElementById('id_slip_link');
+    const checkoutForm = document.getElementById('checkoutForm'); /* */
+    if(checkoutForm){ /* */
+        checkoutForm.addEventListener('submit', function(event){ /* */
+            const slipImageInput = document.getElementById('id_slip_image'); /* */
+            const slipLinkInput = document.getElementById('id_slip_link'); /* */
             
-            const slipImageUploaded = slipImageInput && slipImageInput.files && slipImageInput.files.length > 0;
-            const slipLinkProvided = slipLinkInput && slipLinkInput.value.trim() !== '';
+            const slipImageUploaded = slipImageInput && slipImageInput.files && slipImageInput.files.length > 0; /* */
+            const slipLinkProvided = slipLinkInput && slipLinkInput.value.trim() !== ''; /* */
 
-            if (!slipImageUploaded && !slipLinkProvided) {
-                alert('กรุณาแนบหลักฐานการโอนเงิน (อัปโหลดรูปภาพ หรือ ใส่ลิงก์)');
-                event.preventDefault();
-                return false;
+            if (!slipImageUploaded && !slipLinkProvided) { /* */
+                alert('กรุณาแนบหลักฐานการโอนเงิน (อัปโหลดรูปภาพ หรือ ใส่ลิงก์)'); /* */
+                event.preventDefault(); /* */
+                return false; /* */
             }
             
-            const fullName = document.getElementById('id_full_name').value.trim();
-            const phoneNumber = document.getElementById('id_phone_number').value.trim();
-            const email = document.getElementById('id_email').value.trim();
+            const fullName = document.getElementById('id_full_name').value.trim(); /* */
+            const phoneNumber = document.getElementById('id_phone_number').value.trim(); /* */
+            const email = document.getElementById('id_email').value.trim(); /* */
 
-            if (!fullName || !phoneNumber || !email) {
-                alert('กรุณากรอกข้อมูลการติดต่อให้ครบถ้วน (ชื่อ-นามสกุล, เบอร์โทรศัพท์, อีเมล)');
-                event.preventDefault();
-                return false;
+            if (!fullName || !phoneNumber || !email) { /* */
+                alert('กรุณากรอกข้อมูลการติดต่อให้ครบถ้วน (ชื่อ-นามสกุล, เบอร์โทรศัพท์, อีเมล)'); /* */
+                event.preventDefault(); /* */
+                return false; /* */
             }
         });
     }
