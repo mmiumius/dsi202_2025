@@ -40,4 +40,7 @@ urlpatterns = [
     # !!! (แนะนำ) เพิ่ม path สำหรับหน้า Thank You (ตัวอย่าง) !!!
     # คุณจะต้องสร้าง view 'order_thank_you_view' และ template สำหรับหน้านี้ด้วย
     path('order/thank-you/', views.order_thank_you_view, name='order_thank_you'),
+
+    path('new-arrivals/', views.new_arrivals_view, name='new_arrivals'),
+
 ]

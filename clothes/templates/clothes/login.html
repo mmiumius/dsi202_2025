@@ -1,9 +1,14 @@
+{% load socialaccount %} {# <--- เพิ่มบรรทัดนี้ถ้ายังไม่มี #}
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Login - MindVibe</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    {# --- (แนะนำ) เพิ่ม Font Awesome ถ้ายังไม่มี สำหรับไอคอน Google --- #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* ... (CSS Styles from your file) ... */
         * {
@@ -59,7 +64,7 @@
             color: #2C3E50; /* Dark Slate Gray, consistent with logo */
             text-align: center;
             margin-top: 0;
-            margin-bottom: 2rem; /* Increased margin */
+            margin-bottom: 1.5rem; /* ลดระยะห่างเล็กน้อยถ้ามีปุ่ม social */
         }
 
         form p { /* Styling for Django form paragraphs */
@@ -148,6 +153,76 @@
             color: #B78282; /* Even darker Cashmere Rose on hover */
             text-decoration: underline;
         }
+
+        /* --- CSS สำหรับ Social Login --- */
+        .socialaccount_ballot {
+            margin-top: 1rem; /* ลดระยะห่างด้านบนเล็กน้อย */
+            margin-bottom: 1rem; /* เพิ่มระยะห่างด้านล่าง */
+            text-align: center;
+        }
+        .socialaccount_ballot ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .socialaccount_ballot ul li {
+            margin-bottom: 0.75rem;
+        }
+        .socialaccount_provider { /* สไตล์ปุ่ม social ทั่วไป */
+            display: inline-flex; /* ใช้ flex เพื่อจัดไอคอนกับข้อความ */
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.2rem;
+            border: 1px solid #D0D0D0; /* สีขอบเหมือน input field */
+            border-radius: 6px; /* โค้งมนเหมือนปุ่มอื่นๆ */
+            text-decoration: none;
+            color: #4A4A4A; /* สีข้อความ */
+            background-color: #FFFFFF; /* พื้นหลังสีขาว */
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            width: 100%;
+            font-family: 'Kanit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 400;
+            cursor: pointer;
+        }
+        .socialaccount_provider:hover {
+            background-color: #f8f9fa; /* สีพื้นหลังอ่อนๆ ตอน hover */
+            border-color: #A7B8A5; /* สีขอบเขียวตอน hover */
+        }
+        .socialaccount_provider i { /* สไตล์ไอคอน */
+            margin-right: 0.75em; /* ระยะห่างระหว่างไอคอนกับข้อความ */
+            font-size: 1.1em; /* ขนาดไอคอน */
+        }
+
+        /* สไตล์เฉพาะสำหรับปุ่ม Google */
+        .socialaccount_provider.google {
+            /* อาจจะไม่ต้องเปลี่ยนสีพื้นหลังหรือข้อความมากนัก ให้ดูคลีนๆ */
+            /* border-color: #4285F4; /* ถ้าต้องการให้ขอบเป็นสีฟ้าของ Google */
+        }
+        .socialaccount_provider.google i {
+            color: #DB4437; /* สีไอคอน Google (แดง) */
+        }
+
+
+        .socialaccount_login_or_container {
+            text-align: center;
+            margin: 1rem 0; /* ปรับระยะห่าง */
+            color: #7F8C8D; /* สีเทา */
+            font-size: 0.85rem; /* ขนาดตัวอักษร */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .socialaccount_login_or_container::before,
+        .socialaccount_login_or_container::after {
+            content: "";
+            flex-grow: 1;
+            height: 1px;
+            background-color: #D0D0D0; /* สีเส้นคั่น */
+            margin: 0 0.5em;
+        }
+        /* --- สิ้นสุด CSS สำหรับ Social Login --- */
+
     </style>
 </head>
 <body>
@@ -156,13 +231,49 @@
 
     <div class="form-container">
         <h1>Login</h1>
-        <form method="post">
+
+        {% get_providers as socialaccount_providers %}
+        {% if socialaccount_providers %}
+            <div class="socialaccount_ballot">
+                <ul>
+                    {% for provider in socialaccount_providers %}
+                        {% if provider.id == 'google' %}
+                            <li>
+                                <a title="Login with {{provider.name}}" class="socialaccount_provider {{provider.id}}"
+                                   href="{% provider_login_url provider.id process='login' scope='profile email' auth_params='access_type=online' %}">
+                                   <i class="fab fa-google"></i>Login with Google
+                                </a>
+                            </li>
+                        {% endif %}
+                        {# คุณสามารถเพิ่ม provider อื่นๆ ที่นี่ได้ เช่น Facebook #}
+                         {% if provider.id == 'facebook' %}
+                            <li>
+                                <a title="Login with {{provider.name}}" class="socialaccount_provider {{provider.id}}"
+                                   href="{% provider_login_url provider.id process='login' %}">
+                                   <i class="fab fa-facebook-f"></i> Login with {{provider.name}}
+                                </a>
+                            </li>
+                        {% endif %} 
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="socialaccount_login_or_container">
+                <span>or</span>
+            </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'clothes:login' %}">
             {% csrf_token %}
             {{ form.as_p }}
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}" />
+            {% endif %}
             <button type="submit" class="submit-btn">Login</button>
         </form>
         <div class="form-links">
-            <a href="{% url 'clothes:signup' %}">Don't have an account? Sign Up</a> {# <<<< แก้ไข #}
+            <a href="{% url 'clothes:signup' %}">Don't have an account? Sign Up</a>
+             <br>
+            <a href="#" style="font-size:0.85rem; margin-top:0.5rem; display:inline-block;">Forgot Password?</a> 
         </div>
     </div>
 </body>

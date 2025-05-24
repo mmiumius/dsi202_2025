@@ -60,7 +60,7 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                messages.info(request, f"ยินดีต้อนรับกลับ, {username}!")
+                #messages.info(request, f"ยินดีต้อนรับกลับ, {username}!")
                 next_url = request.POST.get('next', None)
                 if next_url:
                     return redirect(next_url)
@@ -76,7 +76,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    messages.success(request, "ออกจากระบบเรียบร้อยแล้ว")
+    #messages.success(request, "ออกจากระบบเรียบร้อยแล้ว")
     return redirect('clothes:welcome')
 
 def products_by_category_view(request, category_slug):
